@@ -1,26 +1,23 @@
-# Nama file: tab2_scoring.py
+# views/tab2_scoring/__init__.py
 import streamlit as st
 import pandas as pd
-from utils import DAFTAR_KECAMATAN
+from utils.constants import DAFTAR_KECAMATAN
 
 def render_tab2():
     st.subheader("🏆 Peringkat Akumulasi Prioritas Kecamatan")
-    st.markdown("Skor ini dihitung **berdasarkan Kolom Acuan (yang bertombol merah)** pada masing-masing tabel di Tab 1. Kecamatan di posisi ke-1 pada suatu tabel mendapat 9 poin, ke-2 mendapat 8 poin, dst.")
+    st.markdown("Skor ini dihitung **berdasarkan Kolom Acuan yang Anda pilih di Menu Pengaturan Urutan** pada masing-masing tabel di Tab 1. Kecamatan di posisi ke-1 pada suatu tabel mendapat 9 poin, ke-2 mendapat 8 poin, dst.")
     
     if not st.session_state.koleksi_tabel:
-        st.info("Tambahkan minimal 1 tabel di 'Tab 1' untuk melihat perhitungan akumulasi poin.")
+        st.info("Tambahkan minimal 1 tabel di 'Input Data Indikator' untuk melihat perhitungan akumulasi poin.")
     else:
-        # Menyiapkan kerangka data
         rekap_data = [{"Kecamatan": kec, "Total Poin": 0} for kec in DAFTAR_KECAMATAN]
         df_rekap = pd.DataFrame(rekap_data).set_index("Kecamatan")
         
-        # Menghitung poin dari SETIAP TABEL (hanya berpatokan pada kolom aktif)
         for tabel in st.session_state.koleksi_tabel:
             judul, active_col, kolom_numerik = tabel['judul'], tabel['active_sort_col'], tabel['kolom_numerik']
             
             df_temp_full = pd.DataFrame(tabel['data'])
             
-            # Hitung Jumlah hanya jika tabel tersebut memiliki sub-kolom numerik
             if len(kolom_numerik) > 0:
                 df_temp_full['Jumlah'] = df_temp_full[kolom_numerik].sum(axis=1)
                 

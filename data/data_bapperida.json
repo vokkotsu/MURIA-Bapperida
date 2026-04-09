@@ -459,5 +459,70 @@
             }
         ],
         "history_index": 0
+    },
+    {
+        "id": "996455cc-9ae0-4f7f-afb3-6503badb8ddd",
+        "judul": "hehe",
+        "data": {
+            "Kecamatan": [
+                "Kaliwungu",
+                "Kota",
+                "Jati",
+                "Undaan",
+                "Mejobo",
+                "Jekulo",
+                "Bae",
+                "Gebog",
+                "Dawe"
+            ],
+            "Jumlah": [
+                695,
+                745,
+                897,
+                939,
+                620,
+                731,
+                466,
+                565,
+                648
+            ]
+        },
+        "kolom_numerik": [],
+        "warna": "#df4bff",
+        "active_sort_col": "Jumlah",
+        "panah_bawah": true,
+        "hapus_jumlah": false,
+        "history": [
+            {
+                "data": {
+                    "Kecamatan": [
+                        "Kaliwungu",
+                        "Kota",
+                        "Jati",
+                        "Undaan",
+                        "Mejobo",
+                        "Jekulo",
+                        "Bae",
+                        "Gebog",
+                        "Dawe"
+                    ],
+                    "Jumlah": [
+                        695,
+                        745,
+                        897,
+                        939,
+                        620,
+                        731,
+                        466,
+                        565,
+                        648
+                    ]
+                },
+                "kolom_numerik": [],
+                "hapus_jumlah": false,
+                "active_sort_col": "Jumlah"
+            }
+        ],
+        "history_index": 0
     }
 ]
