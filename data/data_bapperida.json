@@ -361,7 +361,7 @@
             "Tenaga Kesehatan - Tenaga Kesehatan Lingkungan",
             "Tenaga Kesehatan - Tenaga Gizi"
         ],
-        "warna": "#FF4B4B",
+        "warna": "#d47909",
         "active_sort_col": "Jumlah",
         "panah_bawah": false,
         "hapus_jumlah": false,
@@ -516,6 +516,71 @@
                         466,
                         565,
                         648
+                    ]
+                },
+                "kolom_numerik": [],
+                "hapus_jumlah": false,
+                "active_sort_col": "Jumlah"
+            }
+        ],
+        "history_index": 0
+    },
+    {
+        "id": "56d7807d-6f2f-4eb7-9123-897efca1f22a",
+        "judul": "Jumlah Desa Kelurahan Yang Memiliki Kantor Pos Menurut Kecamatan Di Kabupaten Kudus, 2025",
+        "data": {
+            "Kecamatan": [
+                "Kaliwungu",
+                "Kota",
+                "Jati",
+                "Undaan",
+                "Mejobo",
+                "Jekulo",
+                "Bae",
+                "Gebog",
+                "Dawe"
+            ],
+            "Jumlah": [
+                3,
+                9,
+                2,
+                2,
+                2,
+                1,
+                2,
+                1,
+                3
+            ]
+        },
+        "kolom_numerik": [],
+        "warna": "#d20b63",
+        "active_sort_col": "Jumlah",
+        "panah_bawah": false,
+        "hapus_jumlah": false,
+        "history": [
+            {
+                "data": {
+                    "Kecamatan": [
+                        "Kaliwungu",
+                        "Kota",
+                        "Jati",
+                        "Undaan",
+                        "Mejobo",
+                        "Jekulo",
+                        "Bae",
+                        "Gebog",
+                        "Dawe"
+                    ],
+                    "Jumlah": [
+                        3,
+                        9,
+                        2,
+                        2,
+                        2,
+                        1,
+                        2,
+                        1,
+                        3
                     ]
                 },
                 "kolom_numerik": [],
