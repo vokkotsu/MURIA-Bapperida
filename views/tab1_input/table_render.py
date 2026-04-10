@@ -171,6 +171,7 @@ def render_tables():
             }
             for col in kolom_tampil:
                 col_singkat = col if len(col) <= 15 else col[:15] + "..."
+                # Kembali menggunakan NumberColumn murni yang lebih aman untuk editor
                 config_kolom_tab1[col] = st.column_config.NumberColumn(
                     label=col_singkat,
                     help=f"Judul Kolom Utuh: {col}",

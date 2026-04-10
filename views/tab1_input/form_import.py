@@ -10,6 +10,16 @@ def render_step_4():
         
         uploaded_file = st.file_uploader("Pilih file CSV / Excel", type=['csv', 'xlsx'])
         
+        # --- FITUR BARU: PENYESUAIAN BARIS HEADER ---
+        col_hdr1, col_hdr2 = st.columns([2, 3])
+        with col_hdr1:
+            header_row_ui = st.number_input(
+                "📌 Baris Judul Kolom (Header):", 
+                min_value=1, value=1, 
+                help="Ubah angka ini (misal ke baris 3 atau 4) jika data Excel Anda memiliki judul laporan/teks kosong di bagian paling atas."
+            )
+        header_index = header_row_ui - 1 # Mengubah ke format index (dimulai dari 0)
+        
         if uploaded_file is not None:
             if st.session_state.get('last_uploaded_filename') != uploaded_file.name:
                 nama_tanpa_ext = uploaded_file.name.rsplit('.', 1)[0]
@@ -27,16 +37,27 @@ def render_step_4():
         
         if uploaded_file is not None:
             try:
+                # Membaca file dengan mengabaikan baris di atas header_index
                 if uploaded_file.name.endswith('.csv'):
-                    df_import = pd.read_csv(uploaded_file)
+                    df_import = pd.read_csv(uploaded_file, header=header_index)
                 else:
-                    df_import = pd.read_excel(uploaded_file)
+                    df_import = pd.read_excel(uploaded_file, header=header_index)
                     
                 st.success("✅ File berhasil dibaca!")
                 
+                # --- FITUR BARU: PRATINJAU DATA MENTAH ---
+                with st.expander("👀 Pratinjau Tabel Mentah (Klik untuk melipat)", expanded=True):
+                    st.caption("Jika Anda melihat kolom bernama **'Unnamed'**, berarti Anda salah mengatur Baris Judul. Silakan ubah angka 'Baris Judul Kolom' di atas menjadi baris yang benar.")
+                    try:
+                        # Format angka agar menggunakan titik sebagai pemisah ribuan
+                        st.dataframe(df_import.head(4).style.format(thousands="."), use_container_width=True)
+                    except Exception:
+                        # Fallback jika terjadi error
+                        st.dataframe(df_import.head(4), use_container_width=True)
+                
                 kec_col_guess = None
                 for col in df_import.columns:
-                    if 'kecamatan' in col.lower() or 'wilayah' in col.lower() or 'nama' in col.lower():
+                    if 'kecamatan' in str(col).lower() or 'wilayah' in str(col).lower() or 'nama' in str(col).lower():
                         kec_col_guess = col
                         break
                 
@@ -46,7 +67,7 @@ def render_step_4():
                 kecamatan_col = st.selectbox("Pilih kolom yang berisi nama Kecamatan:", options=df_import.columns, index=list(df_import.columns).index(kec_col_guess) if kec_col_guess else 0)
                 
                 st.markdown("#### Pilih Kolom Data yang Ingin Diimpor:")
-                kolom_tersedia = [col for col in df_import.columns if col != kecamatan_col]
+                kolom_tersedia = [col for col in df_import.columns if col != kecamatan_col and not str(col).startswith("Unnamed")]
                 kolom_terpilih = []
                 
                 cols = st.columns(3)
@@ -78,14 +99,22 @@ def render_step_4():
                                 try:
                                     row_idx = next(i for i, v in enumerate(import_kec_list) if kec_lower in v)
                                     raw_val = df_import.iloc[row_idx][col_name]
-                                    try:
-                                        val = float(raw_val)
-                                        if val.is_integer():
-                                            val = int(val)
-                                    except:
+                                    
+                                    # Sanitasi data
+                                    if pd.isna(raw_val) or str(raw_val).strip() in ["", "-", ".", "NaN", "null"]:
                                         val = 0
+                                    else:
+                                        try:
+                                            clean_val = str(raw_val).replace(',', '').strip()
+                                            val = float(clean_val)
+                                            if val.is_integer():
+                                                val = int(val)
+                                        except ValueError:
+                                            val = 0
+                                            
                                 except StopIteration:
                                     val = 0
+                                    
                                 extracted_data[idx][kec] = val
                                 
                         st.session_state.angka_acak_sementara = extracted_data

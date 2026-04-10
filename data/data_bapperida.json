@@ -252,5 +252,205 @@
             }
         ],
         "history_index": 0
+    },
+    {
+        "id": "e9899f20-3ddf-415a-99c7-74faae1624e0",
+        "judul": "Jumlah Desa Kelurahan Yang Mengalami Bencana Alam Menurut Kecamatan Di Kabupaten Kudus, 2025",
+        "data": {
+            "Kecamatan": [
+                "Kaliwungu",
+                "Kota",
+                "Jati",
+                "Undaan",
+                "Mejobo",
+                "Jekulo",
+                "Bae",
+                "Gebog",
+                "Dawe"
+            ],
+            "Jumlah Desa/Kelurahan yang Mengalami Bencana Alam - Banjir": [
+                7,
+                0,
+                8,
+                9,
+                9,
+                7,
+                1,
+                1,
+                0
+            ],
+            "Jumlah Desa/Kelurahan yang Mengalami Bencana Alam - Gempa Bumi": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "Jumlah Desa/Kelurahan yang Mengalami Bencana Alam - Tanah Longsor": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                4
+            ]
+        },
+        "kolom_numerik": [
+            "Jumlah Desa/Kelurahan yang Mengalami Bencana Alam - Banjir",
+            "Jumlah Desa/Kelurahan yang Mengalami Bencana Alam - Gempa Bumi",
+            "Jumlah Desa/Kelurahan yang Mengalami Bencana Alam - Tanah Longsor"
+        ],
+        "warna": "#FF4B4B",
+        "active_sort_col": "Jumlah",
+        "panah_bawah": true,
+        "hapus_jumlah": false,
+        "history": [
+            {
+                "data": {
+                    "Kecamatan": [
+                        "Kaliwungu",
+                        "Kota",
+                        "Jati",
+                        "Undaan",
+                        "Mejobo",
+                        "Jekulo",
+                        "Bae",
+                        "Gebog",
+                        "Dawe"
+                    ],
+                    "Jumlah Desa/Kelurahan yang Mengalami Bencana Alam - Banjir": [
+                        7,
+                        0,
+                        8,
+                        9,
+                        9,
+                        7,
+                        1,
+                        1,
+                        0
+                    ],
+                    "Jumlah Desa/Kelurahan yang Mengalami Bencana Alam - Gempa Bumi": [
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0
+                    ],
+                    "Jumlah Desa/Kelurahan yang Mengalami Bencana Alam - Tanah Longsor": [
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        1,
+                        4
+                    ]
+                },
+                "kolom_numerik": [
+                    "Jumlah Desa/Kelurahan yang Mengalami Bencana Alam - Banjir",
+                    "Jumlah Desa/Kelurahan yang Mengalami Bencana Alam - Gempa Bumi",
+                    "Jumlah Desa/Kelurahan yang Mengalami Bencana Alam - Tanah Longsor"
+                ],
+                "hapus_jumlah": false,
+                "active_sort_col": "Jumlah Desa/Kelurahan yang Mengalami Bencana Alam - Banjir"
+            }
+        ],
+        "history_index": 0
+    },
+    {
+        "id": "2823ed84-4567-44f0-aa80-ad0970fb1770",
+        "judul": "Daya Terpasang, Produksi, Dan Distribusi Listrik Pt. Pln (Persero) Pada Cabang Ranting Pln Menurut Kecamatan Di Kabupaten Kudus, 2023",
+        "data": {
+            "Kecamatan": [
+                "Kaliwungu",
+                "Kota",
+                "Jati",
+                "Undaan",
+                "Mejobo",
+                "Jekulo",
+                "Bae",
+                "Gebog",
+                "Dawe"
+            ],
+            "Daya Terpasang (VA)": [
+                66766702,
+                57143407,
+                70100928,
+                49409336,
+                49953058,
+                70036734,
+                47692152,
+                67296942,
+                68816410
+            ],
+            "Produksi Listrik (kWh)": [
+                158741746,
+                135861799,
+                166669065,
+                117473593,
+                118766323,
+                166516440,
+                113390886,
+                160002424,
+                163615048
+            ],
+            "Listrik Terjual (kWh)": [
+                136493064,
+                116819890,
+                143309319,
+                101008910,
+                102120455,
+                143178085,
+                97498421,
+                137577051,
+                140683342
+            ],
+            "Dipakai Sendiri (kWh)": [
+                425797,
+                364426,
+                447061,
+                315103,
+                318570,
+                446652,
+                304151,
+                429179,
+                438869
+            ],
+            "Susut/Hilang (kWh)": [
+                8962698,
+                7670876,
+                9410281,
+                6632662,
+                6705651,
+                9401664,
+                6402149,
+                9033877,
+                9237849
+            ]
+        },
+        "kolom_numerik": [
+            "Daya Terpasang (VA)",
+            "Produksi Listrik (kWh)",
+            "Listrik Terjual (kWh)",
+            "Dipakai Sendiri (kWh)",
+            "Susut/Hilang (kWh)"
+        ],
+        "warna": "#FF4B4B",
+        "active_sort_col": "Daya Terpasang (VA)",
+        "panah_bawah": true,
+        "hapus_jumlah": false
     }
 ]

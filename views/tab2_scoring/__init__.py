@@ -2,7 +2,16 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import io
 from utils.constants import DAFTAR_KECAMATAN
+
+# Fungsi pembantu untuk mengubah DataFrame ke Excel dalam memori
+def konversi_df_ke_excel(df):
+    output = io.BytesIO()
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+        df.to_excel(writer, index=False, sheet_name='Peringkat')
+    processed_data = output.getvalue()
+    return processed_data
 
 def render_tab2():
     st.subheader("🏆 Peringkat Akumulasi Prioritas Kecamatan")
@@ -15,7 +24,7 @@ def render_tab2():
         rekap_data = [{"Kecamatan": kec, "Total Poin": 0} for kec in DAFTAR_KECAMATAN]
         df_rekap = pd.DataFrame(rekap_data).set_index("Kecamatan")
         
-        # --- PERBAIKAN: Konfigurasi Kolom untuk Mencegah Judul Terlalu Panjang ---
+        # Konfigurasi kolom agar judul tidak kepanjangan
         config_kolom = {
             "Kecamatan": st.column_config.TextColumn("Kecamatan", width="medium"),
             "Total Poin": st.column_config.NumberColumn("Total Poin", width="small")
@@ -32,23 +41,18 @@ def render_tab2():
                 df_temp_full['Jumlah'] = df_temp_full[kolom_numerik].sum(axis=1)
                 
             df_temp = df_temp_full[['Kecamatan', active_col]]
-            
             df_temp = df_temp.sort_values(by=active_col, ascending=not tabel['panah_bawah']).reset_index(drop=True)
             df_temp['Posisi'] = range(1, len(DAFTAR_KECAMATAN) + 1)
             df_temp['Poin'] = range(len(DAFTAR_KECAMATAN), 0, -1)
             
             nama_kolom_posisi = f"Pos: {judul} ({active_col})"
-            
-            # --- LOGIKA PENYINGKATAN JUDUL KOLOM & TOOLTIP ---
-            # Jika judul lebih dari 15 huruf, potong dan tambahkan "..."
             judul_singkat = judul if len(judul) <= 15 else judul[:15] + "..."
             active_col_singkat = active_col if len(active_col) <= 15 else active_col[:15] + "..."
             label_tampil = f"Pos: {judul_singkat} ({active_col_singkat})"
             
-            # Daftarkan konfigurasi ke Streamlit
             config_kolom[nama_kolom_posisi] = st.column_config.Column(
                 label=label_tampil,
-                help=f"Judul Tabel Asli: {judul}\nIndikator Terpilih: {active_col}", # Teks utuh muncul saat di-hover
+                help=f"Judul Tabel Asli: {judul}\nIndikator Terpilih: {active_col}",
                 width="medium"
             )
             
@@ -64,77 +68,66 @@ def render_tab2():
             
         df_rekap = df_rekap[["Kecamatan"] + kolom_posisi + ["Total Poin"]]
         
-        # 1. Tampilkan Tabel Rekapitulasi Peringkat dengan Konfigurasi Kolom
-        st.dataframe(
-            df_rekap.style.background_gradient(subset=["Total Poin"], cmap="Blues"), 
-            use_container_width=True, 
-            hide_index=True,
-            column_config=config_kolom # Menyuntikkan pengaturan kolom yang baru dibuat
+        # 1. Tampilkan Tabel
+        try:
+            st.dataframe(
+                df_rekap.style.background_gradient(subset=["Total Poin"], cmap="Blues").format(thousands="."), 
+                use_container_width=True, 
+                hide_index=True,
+                column_config=config_kolom
+            )
+        except NameError:
+            # Fallback jika config_kolom belum terpasang
+            st.dataframe(df_rekap.style.background_gradient(subset=["Total Poin"], cmap="Blues").format(thousands="."), use_container_width=True, hide_index=True)
+            
+        # --- FITUR BARU: TOMBOL EKSPOR EXCEL ---
+        excel_data = konversi_df_ke_excel(df_rekap)
+        st.download_button(
+            label="📥 Unduh Tabel Peringkat (Excel / .xlsx)",
+            data=excel_data,
+            file_name='Rekap_Peringkat_Kecamatan_Kudus.xlsx',
+            mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            type="primary"
         )
         
-        # --- FITUR BARU: VISUALISASI PIE CHART BERDASARKAN ANGKA ASLI ---
+        # --- VISUALISASI PIE CHART ---
         st.markdown("---")
         st.markdown("#### 📊 Proporsi Data Indikator Asli")
-        st.caption("Grafik di bawah ini menampilkan pembagian persentase berdasarkan **angka asli (raw data)** dari masing-masing kolom acuan di Tab 1, bukan berdasarkan poin peringkat.")
+        st.caption("💡 **Tip:** Arahkan mouse ke atas grafik, lalu klik **ikon Kamera di pojok kanan atas** untuk mengunduh Pie Chart ini sebagai gambar PNG.")
         
-        # Membuat dataframe khusus untuk menampung angka asli
         rekap_raw_data = [{"Kecamatan": kec} for kec in DAFTAR_KECAMATAN]
         df_raw = pd.DataFrame(rekap_raw_data).set_index("Kecamatan")
         
         for tabel in st.session_state.koleksi_tabel:
             judul, active_col, kolom_numerik = tabel['judul'], tabel['active_sort_col'], tabel['kolom_numerik']
-            
             df_temp_full = pd.DataFrame(tabel['data'])
-            
             if len(kolom_numerik) > 0:
                 df_temp_full['Jumlah'] = df_temp_full[kolom_numerik].sum(axis=1)
-                
             nama_kolom_raw = f"{judul} ({active_col})"
-            
             for _, row in df_temp_full.iterrows():
                 df_raw.at[row['Kecamatan'], nama_kolom_raw] = row[active_col]
                 
         df_raw = df_raw.reset_index()
-        
-        # Mengambil daftar kolom untuk dropdown (selain nama Kecamatan)
         pilihan_kolom = [col for col in df_raw.columns if col != "Kecamatan"]
         
         col_select, _ = st.columns([1, 1])
         with col_select:
-            # Dropdown untuk memilih kolom mana yang mau dibuatkan Pie Chart
             if pilihan_kolom:
-                kolom_terpilih = st.selectbox(
-                    "Pilih indikator untuk ditampilkan pada Pie Chart:", 
-                    pilihan_kolom, 
-                    index=0 
-                )
+                kolom_terpilih = st.selectbox("Pilih indikator untuk ditampilkan pada Pie Chart:", pilihan_kolom, index=0)
             else:
                 kolom_terpilih = None
             
         if kolom_terpilih:
-            # Pengecekan nilai negatif (Pie chart tidak bisa memproses nilai negatif)
-            # Kita set nilai minimal 0 (clip) agar grafik tetap aman dirender
             df_plot = df_raw[['Kecamatan', kolom_terpilih]].copy()
             df_plot[kolom_terpilih] = df_plot[kolom_terpilih].clip(lower=0)
 
-            # Membuat grafik Pie Chart menggunakan Plotly Express
             fig = px.pie(
-                df_plot, 
-                values=kolom_terpilih, 
-                names='Kecamatan', 
+                df_plot, values=kolom_terpilih, names='Kecamatan', 
                 title=f"Distribusi Angka Asli: <b>{kolom_terpilih}</b>",
                 color_discrete_sequence=px.colors.qualitative.Pastel 
             )
-            
-            # Merapikan tampilan (menambahkan persentase di dalam kue, label angka asli saat di-hover)
-            fig.update_traces(
-                textposition='inside', 
-                textinfo='percent+label', 
-                hovertemplate="<b>%{label}</b><br>Angka Asli: %{value}<br>Proporsi: %{percent}"
-            )
-            
-            # Menghapus background agar menyatu dengan mode Gelap/Terang Streamlit
+            fig.update_traces(textposition='inside', textinfo='percent+label', hovertemplate="<b>%{label}</b><br>Angka Asli: %{value}<br>Proporsi: %{percent}")
             fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
             
-            # Menampilkan grafik ke layar
-            st.plotly_chart(fig, use_container_width=True)
+            # Config agar fitur modebar (termasuk tombol download PNG) selalu muncul
+            st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': True})
