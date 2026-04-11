@@ -1,103 +1,78 @@
-🏔️ MURIA: Mesin Utama Rencana & Intervensi Area
+# 🏔️ MURIA: Mesin Utama Rencana & Intervensi Area
 
-MURIA (Multidimensional Regional Intelligent Analytics) adalah sebuah Sistem Pendukung Keputusan (DSS) dan aplikasi Kecerdasan Buatan (AI) Spasial yang dikembangkan khusus untuk Badan Perencanaan Pembangunan, Riset, dan Inovasi Daerah (Bapperida) Kabupaten Kudus.
+Aplikasi web pintar ini dibangunkan khusus untuk Badan Perencanaan Pembangunan, Riset, dan Inovasi Daerah (**Bapperida**) Kabupaten Kudus untuk membantu proses pembuatan keputusan dan penentuan prioritas wilayah (Kecamatan). Aplikasi ini menggabungkan dua metodologi utama:
 
-Aplikasi web pintar ini menggabungkan metode perhitungan Scoring tradisional dengan Machine Learning (Algoritma K-Means Clustering) untuk membantu pemangku kebijakan menentukan prioritas intervensi pembangunan wilayah (Kecamatan) secara cerdas, cepat, dan berbasis data (Data-Driven).
+1. **Metode Penilaian (Scoring)** tradisional untuk pemeringkatan data berdasarkan kriteria.
+2. **K-Means Clustering (Kecerdasan Buatan)** untuk pembagian zona prioritas secara spasial.
 
-✨ Fitur Utama (Update Terbaru)
+## ✨ Fitur Utama
 
-🏠 1. Beranda Executive (Executive Dashboard)
+### 🏠 Beranda Executive (Modul Utama)
+* **Ringkasan Eksekutif:** Menampilkan *Key Performance Indicators* (KPI) seperti jumlah indikator yang dianalisis dan status sistem AI.
+* **Deteksi Zona Kritis Dinamis:** AI secara otomatis menghitung dan menampilkan jumlah kecamatan yang berada dalam zona paling kritis.
+* **Top 5 Prioritas:** Grafik batang (*Bar Chart*) interaktif yang menampilkan 5 kecamatan teratas yang membutuhkan intervensi (mendukung penanganan nilai poin yang sama/seri).
 
-Ringkasan Cepat: Menampilkan Key Performance Indicators (KPI) seperti total indikator yang dianalisis dan status sistem AI.
+### 📝 Tab 1: Input Data Indikator (Modul Input)
+* **Auto Import Pintar:** Mendukung unggah file CSV/Excel dengan fungsi penyesuaian baris judul (*Header*) untuk menghindari error `Unnamed column`.
+* **Pembersihan Data (Sanitasi) Otomatis:** Sistem membersihkan data kotor dari BPS secara otomatis (seperti sel kosong, tanda strip `-`, atau pemisah koma) menjadi angka murni (`0`).
+* **Editor Tabel Interaktif:** Data dapat diedit secara langsung dengan fitur *Undo/Redo* kolom, pengaturan arah urutan (Terkecil/Terbesar), dan format pemisah ribuan otomatis.
 
-Deteksi Wilayah Kritis Dinamis: AI secara otomatis mendeteksi jumlah kecamatan yang masuk ke dalam zona terparah/paling kritis.
+### 🏆 Tab 2: Peringkat Akumulasi/Scoring (Modul Penilaian)
+* **Sistem Poin Terpusat:** Mengubah peringkat sektoral menjadi poin akumulasi untuk menentukan prioritas utama secara otomatis.
+* **Visualisasi Proporsi:** Visualisasi *Pie Chart* interaktif menggunakan Plotly untuk melihat perbandingan angka mentah antar kecamatan.
+* **Ekspor Laporan:** Tabel hasil peringkat dapat diunduh langsung ke dalam format **Excel (.xlsx)**.
 
-Top 5 Prioritas: Grafik Bar Chart interaktif yang menampilkan 5 kecamatan dengan skor kebutuhan intervensi tertinggi (mendukung penanganan nilai seri/seimbang).
+### 🗺️ Tab 3: AI Peta Zonasi / K-Means (Modul AI)
+* **Klastering Multi-Dimensi:** Memanfaatkan algoritma *K-Means* dari `scikit-learn` untuk mengelompokkan wilayah ke dalam 2 hingga 4 zona secara otomatis.
+* **Peta WebGIS Interaktif:** Menghasilkan peta Kudus interaktif menggunakan `folium` yang memvisualisasikan zona prioritas melalui warna.
+* **Ekspor Ganda:** Mendukung pengunduhan Peta sebagai file **HTML Interaktif** (bisa dibuka secara *offline*) dan unduh tabel rincian anggota klaster dalam format **Excel (.xlsx)**.
 
-📝 2. Manajemen Data Indikator (Smart Input)
+## 📂 Struktur File (Modular)
 
-Auto Import Cerdas: Mendukung unggah file CSV/Excel dengan fitur penyesuaian baris Header (bebas dari error Unnamed column).
+* `app.py` - File utama (*Entry point*) yang menjalankan aplikasi Streamlit dan mengatur navigasi *sidebar*.
+* `requirements.txt` - Daftar dependensi *library* Python untuk *server*.
+* `data/` - Folder penyimpanan basis data lokal (JSON) dan data batas wilayah GeoJSON.
+* `utils/` - Folder file utilitas (fungsi bantuan, manajemen *session state*, dan pewarnaan tabel).
+* `views/` - Folder antarmuka pengguna (UI) yang dipecah menjadi 4 sub-modul utama: `home`, `tab1_input`, `tab2_scoring`, dan `tab3_kmeans`.
 
-Sanitasi Data Otomatis: Sistem otomatis membersihkan data kotor dari BPS (seperti sel kosong, tanda strip -, atau format koma) menjadi angka murni (0).
+## 🛠️ Teknologi yang Digunakan
 
-Data Editor Interaktif: Tabel dapat diedit secara langsung dengan fitur Undo/Redo kolom, manajemen arah panah (Terkecil/Terbesar), dan format pemisah ribuan otomatis.
+* [**Python 3**](https://www.python.org/) - Bahasa pemrograman utama.
+* [**Streamlit**](https://streamlit.io/) - *Framework* antarmuka web.
+* [**Pandas & NumPy**](https://pandas.pydata.org/) - Manipulasi dan analisis struktur data tabel.
+* [**Scikit-Learn**](https://scikit-learn.org/) - *Machine Learning* / algoritma AI (`KMeans`).
+* [**Folium & Streamlit-Folium**](https://python-visualization.github.io/folium/) - Untuk visualisasi peta spasial interaktif.
+* [**Plotly Express**](https://plotly.com/python/) - Pembuatan grafik dan *chart* interaktif.
 
-🏆 3. Peringkat Akumulasi (Scoring System)
+---
 
-Kalkulasi Otomatis: Mengubah peringkat sektoral menjadi poin akumulasi untuk menentukan prioritas utama.
+## 🌐 Akses Aplikasi & Deployment (Hosting)
 
-Proporsi Data Asli: Visualisasi Pie Chart (Plotly) untuk melihat perbandingan angka mentah antar kecamatan.
+### ☁️ Tautan Uji Coba (Streamlit Cloud)
+Aplikasi uji coba (*prototype*) ini telah di-*deploy* ke publik untuk keperluan presentasi dan UAT (*User Acceptance Test*). 
+**Aplikasi ini bisa diakses di:** [Silakan masukkan link Streamlit Anda di sini]
 
-Ekspor Laporan: Tabel hasil peringkat dapat diunduh langsung ke dalam format Excel (.xlsx).
+### 🏢 Deployment via Server Kominfo (On-Premise / Rilis Resmi)
+Metode ini diwajibkan untuk rilis akhir (*Production*) guna menjaga kedaulatan data pemerintahan dan mendukung penggunaan domain resmi `.go.id`. Panduan ini ditujukan untuk Administrator Jaringan/Server Kominfo Kabupaten Kudus.
 
-🗺️ 4. AI Peta Zonasi (K-Means Spatial Clustering)
-
-Klastering Multi-Dimensi: Pengelompokan wilayah secara otomatis (2 hingga 4 Zona) menggunakan model algoritma Scikit-Learn.
-
-Peta WebGIS Interaktif: Visualisasi arsiran peta wilayah Kabupaten Kudus menggunakan Folium.
-
-Ekspor Ganda:
-
-🗺️ Unduh Peta menjadi file HTML Interaktif (bisa dibuka offline tanpa kehilangan fitur zoom/klik).
-
-📥 Unduh Tabel Rincian Anggota Klaster ke format Excel (.xlsx).
-
-📁 Struktur Proyek Modular
-
-Proyek ini telah di-refactor menggunakan arsitektur modular agar mudah dipelihara dan dikembangkan oleh staf IT Bapperida/Kominfo di masa depan:
-
-muria-bapperida-kudus/
-├── app.py                      # File Utama & Injeksi CSS (Navigasi Sidebar)
-├── requirements.txt            # Daftar dependensi pustaka Python
-├── README.md                   # Dokumentasi Proyek
-├── data/                       # Database Lokal (JSON) & Spasial
-│   ├── kudus_kecamatan.geojson # Data Batas Wilayah GeoJSON
-│   ├── config_kmeans.json      # Memori Konfigurasi AI
-│   └── data_bapperida.json     # Penyimpanan utama tabel indikator
-├── utils/                      # Fungsi Bantuan (Logika murni)
-│   ├── constants.py            # Daftar nama kecamatan & koordinat
-│   ├── state_manager.py        # Pengelola Session State & File JSON
-│   └── styling.py              # Fungsi pewarnaan gradasi tabel
-└── views/                      # Antarmuka Pengguna (UI Layer)
-    ├── home/                   # Modul 1: Beranda Executive
-    ├── tab1_input/             # Modul 2: Form Import & Tabel Editor
-    ├── tab2_scoring/           # Modul 3: Tabel Peringkat & Pie Chart
-    └── tab3_kmeans/            # Modul 4: K-Means & WebGIS Peta
-
-
-🛠️ Teknologi yang Digunakan
-
-Aplikasi ini berjalan sepenuhnya menggunakan ekosistem Python (3.10+):
-
-Antarmuka Web: Streamlit
-
-Manipulasi Data: Pandas & NumPy
-
-Kecerdasan Buatan: Scikit-Learn
-
-Visualisasi Spasial (Peta): Folium & Streamlit-Folium
-
-Visualisasi Grafik: Plotly Express
-
-Utilitas Berkas: Openpyxl & IO
-
-🚀 Panduan Instalasi & Menjalankan Aplikasi (Lokal/Server)
-
-Kloning Repositori:
-
-git clone [https://github.com/username-anda/muria-bapperida-kudus.git](https://github.com/username-anda/muria-bapperida-kudus.git)
-cd muria-bapperida-kudus
-
-
-Instalasi Pustaka (Dependencies):
-Sangat disarankan untuk menggunakan Virtual Environment (opsional). Jalankan perintah berikut untuk menginstal semua kebutuhan:
-
-pip install -r requirements.txt
-
-
-Jalankan Aplikasi:
-
-streamlit run app.py
-
-
-Aplikasi akan otomatis terbuka di peramban (browser) Anda pada alamat http://localhost:8501.
+1. **Persiapan Server:** Pastikan OS Server (Ubuntu/Debian) sudah memiliki akses internet, SSH, dan menginstal **Python 3.10+**.
+2. **Tarik Kode Sumber (*Pull Code*):**
+   ```bash
+   git clone [https://github.com/username-anda/muria-bapperida-kudus.git](https://github.com/username-anda/muria-bapperida-kudus.git)
+   cd muria-bapperida-kudus
+   ```
+3. **Instalasi Virtual Environment & Library:**
+   Sangat disarankan menjalankan aplikasi di dalam Virtual Environment (vEnv) agar tidak merusak library sistem OS.
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   ```
+4. **Instalasi Virtual Environment & Library:**
+   Agar aplikasi tidak mati saat koneksi SSH ditutup, gunakan Process Manager seperti `Tmux` atau buatkan `systemd service`.
+   Contoh perintah sederhana untuk menjalankan aplikasi di port spesifik:
+   ```bash
+   streamlit run app.py --server.port 8501
+   ```
+5. **Reverse Proxy & Konfigurasi Domain:**
+Konfigurasikan Nginx atau Apache di server untuk meneruskan (forward) trafik dari domain resmi Bapperida (misal: https://muria.kuduskab.go.id) menuju ke port localhost:8501 tempat aplikasi ini berjalan.
