@@ -448,9 +448,9 @@
             "Dipakai Sendiri (kWh)",
             "Susut/Hilang (kWh)"
         ],
-        "warna": "#FF4B4B",
+        "warna": "#130f58",
         "active_sort_col": "Daya Terpasang (VA)",
-        "panah_bawah": true,
+        "panah_bawah": false,
         "hapus_jumlah": false,
         "history": [
             {
