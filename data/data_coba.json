@@ -349,69 +349,7 @@
                 ],
                 "hapus_jumlah": false,
                 "active_sort_col": "Daya Terpasang (VA)"
-            }
-        ],
-        "history_index": 0
-    },
-    {
-        "id": "75389c51-956d-4fbf-8fee-6ebe5cb4f38c",
-        "judul": "Jumlah Desa Kelurahan Yang Mengalami Bencana Alam Menurut Kecamatan Di Kabupaten Kudus, 2025",
-        "data": {
-            "Kecamatan": [
-                "Kaliwungu",
-                "Kota",
-                "Jati",
-                "Undaan",
-                "Mejobo",
-                "Jekulo",
-                "Bae",
-                "Gebog",
-                "Dawe"
-            ],
-            "Jumlah Desa/Kelurahan yang Mengalami Bencana Alam - Banjir": [
-                7,
-                0,
-                8,
-                9,
-                9,
-                7,
-                1,
-                1,
-                0
-            ],
-            "Jumlah Desa/Kelurahan yang Mengalami Bencana Alam - Gempa Bumi": [
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0
-            ],
-            "Jumlah Desa/Kelurahan yang Mengalami Bencana Alam - Tanah Longsor": [
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                1,
-                4
-            ]
-        },
-        "kolom_numerik": [
-            "Jumlah Desa/Kelurahan yang Mengalami Bencana Alam - Banjir",
-            "Jumlah Desa/Kelurahan yang Mengalami Bencana Alam - Gempa Bumi",
-            "Jumlah Desa/Kelurahan yang Mengalami Bencana Alam - Tanah Longsor"
-        ],
-        "warna": "#FF4B4B",
-        "active_sort_col": "Jumlah Desa/Kelurahan yang Mengalami Bencana Alam - Banjir",
-        "panah_bawah": true,
-        "hapus_jumlah": false,
-        "history": [
+            },
             {
                 "data": {
                     "Kecamatan": [
@@ -425,47 +363,59 @@
                         "Gebog",
                         "Dawe"
                     ],
-                    "Jumlah Desa/Kelurahan yang Mengalami Bencana Alam - Banjir": [
-                        7,
-                        0,
-                        8,
-                        9,
-                        9,
-                        7,
-                        1,
-                        1,
-                        0
+                    "Daya Terpasang (VA)": [
+                        66766702,
+                        57143407,
+                        70100928,
+                        49409336,
+                        49953058,
+                        70036734,
+                        47692152,
+                        67296942,
+                        68816410
                     ],
-                    "Jumlah Desa/Kelurahan yang Mengalami Bencana Alam - Gempa Bumi": [
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0
+                    "Listrik Terjual (kWh)": [
+                        136493064,
+                        116819890,
+                        143309319,
+                        101008910,
+                        102120455,
+                        143178085,
+                        97498421,
+                        137577051,
+                        140683342
                     ],
-                    "Jumlah Desa/Kelurahan yang Mengalami Bencana Alam - Tanah Longsor": [
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        1,
-                        4
+                    "Dipakai Sendiri (kWh)": [
+                        425797,
+                        364426,
+                        447061,
+                        315103,
+                        318570,
+                        446652,
+                        304151,
+                        429179,
+                        438869
+                    ],
+                    "Susut/Hilang (kWh)": [
+                        8962698,
+                        7670876,
+                        9410281,
+                        6632662,
+                        6705651,
+                        9401664,
+                        6402149,
+                        9033877,
+                        9237849
                     ]
                 },
                 "kolom_numerik": [
-                    "Jumlah Desa/Kelurahan yang Mengalami Bencana Alam - Banjir",
-                    "Jumlah Desa/Kelurahan yang Mengalami Bencana Alam - Gempa Bumi",
-                    "Jumlah Desa/Kelurahan yang Mengalami Bencana Alam - Tanah Longsor"
+                    "Daya Terpasang (VA)",
+                    "Listrik Terjual (kWh)",
+                    "Dipakai Sendiri (kWh)",
+                    "Susut/Hilang (kWh)"
                 ],
                 "hapus_jumlah": false,
-                "active_sort_col": "Jumlah Desa/Kelurahan yang Mengalami Bencana Alam - Banjir"
+                "active_sort_col": "Daya Terpasang (VA)"
             }
         ],
         "history_index": 0

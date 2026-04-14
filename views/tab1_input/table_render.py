@@ -1,27 +1,84 @@
 # views/tab1_input/table_render.py
 import streamlit as st
 import pandas as pd
+import json
 import copy
 import random
 from utils.constants import DAFTAR_KECAMATAN
-from utils.state_manager import init_history, simpan_data
+from utils.state_manager import init_history, simpan_data, muat_config_kmeans, simpan_config_kmeans
 from utils.styling import beri_warna_tabel
 from views.tab1_input.form_add_col import render_step_3
 
 def render_tables():
+    # --- FITUR EKSPOR / IMPOR PROYEK OFFLINE ---
+    with st.expander("💾 Simpan / Muat Proyek Offline (.json)", expanded=False):
+        st.info("💡 Gunakan fitur ini untuk mengamankan data ke Laptop/Flashdisk atau berbagi proyek dengan rekan kerja.")
+        col_export, col_import = st.columns(2)
+        
+        with col_export:
+            st.markdown("**1. Simpan Proyek (Ekspor)**")
+            
+            # Menggabungkan data tabel (Tab 1) dan setingan AI (Tab 3) menjadi satu paket
+            project_data = {
+                "data_tabel": st.session_state.get('koleksi_tabel', []),
+                "config_ai": muat_config_kmeans()
+            }
+            json_string = json.dumps(project_data, indent=4)
+            
+            st.download_button(
+                label="📥 Unduh Proyek (.json)",
+                data=json_string,
+                file_name="Backup_Proyek_MURIA.json",
+                mime="application/json",
+                use_container_width=True,
+                help="Unduh seluruh tabel dan pengaturan bobot AI Anda menjadi satu file."
+            )
+            
+        with col_import:
+            st.markdown("**2. Lanjutkan Proyek (Impor)**")
+            uploaded_project = st.file_uploader("Unggah File Proyek (.json)", type=['json'], label_visibility="collapsed")
+            if uploaded_project is not None:
+                if st.button("🔄 Pulihkan Data", use_container_width=True, type="primary"):
+                    try:
+                        isi_file = json.load(uploaded_project)
+                        
+                        # Mengembalikan data ke memori dan menyimpannya ke server
+                        if "data_tabel" in isi_file:
+                            st.session_state.koleksi_tabel = isi_file["data_tabel"]
+                            simpan_data(isi_file["data_tabel"])
+                            
+                        if "config_ai" in isi_file:
+                            simpan_config_kmeans(isi_file["config_ai"])
+                            
+                        # Menghapus hasil AI lama agar sistem menghitung ulang dari data baru
+                        if 'hasil_kmeans' in st.session_state:
+                            del st.session_state['hasil_kmeans']
+                            
+                        st.success("✅ Proyek berhasil dipulihkan!")
+                        st.rerun()
+                    except Exception as e:
+                        st.error("❌ File tidak valid atau rusak.")
+    
+    st.markdown("---")
+    
+    # --- TAMPILAN TABEL YANG SUDAH DISIMPAN ---
     if not st.session_state.koleksi_tabel:
-        st.info("Belum ada data yang ditambahkan. Klik '+ Tambah Data Manual' atau 'Auto Import' untuk memulai.")
+        st.info("Belum ada data yang ditambahkan. Klik '+ Tambah Data Baru' atau 'Auto Import' untuk memulai.")
     else:
         st.caption("💡 Tip: Gunakan menu '⚙️ Pengaturan Urutan' dan 'Hapus Kolom' di bawah judul tabel untuk mengelola data dengan rapi.")
         for i, tabel in enumerate(st.session_state.koleksi_tabel):
+            # Inisialisasi riwayat (history) pada saat merender jika belum punya
             init_history(st.session_state.koleksi_tabel[i])
             tabel = st.session_state.koleksi_tabel[i]
             
             tabel_id = tabel['id']
             kolom_numerik = tabel['kolom_numerik']
             hapus_jumlah = tabel.get('hapus_jumlah', False) 
+            
+            # Status apakah form tambah kolom sedang terbuka
             is_form_open = st.session_state.form_step == 3
             
+            # --- DERETAN TOMBOL KONTROL TABEL ---
             top_col1, top_col2, top_col_undo, top_col_redo, top_col_add, top_col3 = st.columns([4.6, 0.4, 1, 1, 1, 1])
             
             top_col1.markdown(f"### {tabel['judul']}")
@@ -55,6 +112,7 @@ def render_tables():
                 simpan_data(st.session_state.koleksi_tabel)
                 st.rerun()
                 
+            # Tombol Tambah Kolom
             if top_col_add.button("➕ Kolom", key=f"add_col_{tabel_id}", help="Tambah indikator baru ke tabel ini", use_container_width=True, disabled=is_form_open):
                 st.session_state.form_step = 3
                 st.session_state.edit_table_id = tabel_id
@@ -62,14 +120,17 @@ def render_tables():
                 st.session_state.angka_acak_kolom_baru_2 = {kec: random.randint(10, 999) for kec in DAFTAR_KECAMATAN}
                 st.rerun()
                 
+            # Tombol Hapus Tabel
             if top_col3.button("❌ Hapus", key=f"btn_hapus_tabel_{tabel_id}", help="Hapus Tabel Ini Total", disabled=is_form_open, use_container_width=True):
                 st.session_state.koleksi_tabel.pop(i)
                 simpan_data(st.session_state.koleksi_tabel) 
                 st.rerun()
 
+            # TAMPILKAN FORM TAMBAH KOLOM
             if st.session_state.form_step == 3 and st.session_state.get('edit_table_id') == tabel_id:
                 render_step_3(tabel_id, tabel)
 
+            # Menentukan kolom apa saja yang masih ada
             kolom_tampil = []
             if len(kolom_numerik) > 0:
                 kolom_tampil.extend(kolom_numerik)
@@ -86,6 +147,7 @@ def render_tables():
                 st.rerun()
                 continue 
 
+            # --- KONTROL KOLOM ---
             ctrl1, ctrl2 = st.columns(2)
             
             with ctrl1:
@@ -114,6 +176,7 @@ def render_tables():
                     if col_del_btn.button("Hapus", key=f"btn_del_{tabel_id}", use_container_width=True):
                         if del_choice != "-- Pilih Kolom --":
                             nama_col = del_choice
+                            # Pangkas riwayat ke depannya
                             st.session_state.koleksi_tabel[i]['history'] = st.session_state.koleksi_tabel[i]['history'][:st.session_state.koleksi_tabel[i]['history_index'] + 1]
                             
                             if nama_col == "Jumlah":
@@ -130,6 +193,7 @@ def render_tables():
                                     elif not st.session_state.koleksi_tabel[i].get('hapus_jumlah', False):
                                         st.session_state.koleksi_tabel[i]['active_sort_col'] = "Jumlah"
                             
+                            # Simpan langkah penghapusan
                             st.session_state.koleksi_tabel[i]['history'].append({
                                 'data': copy.deepcopy(st.session_state.koleksi_tabel[i]['data']),
                                 'kolom_numerik': copy.deepcopy(st.session_state.koleksi_tabel[i]['kolom_numerik']),
@@ -137,6 +201,7 @@ def render_tables():
                                 'active_sort_col': st.session_state.koleksi_tabel[i]['active_sort_col']
                             })
                             st.session_state.koleksi_tabel[i]['history_index'] += 1
+                            
                             simpan_data(st.session_state.koleksi_tabel)
                             st.rerun()
 
@@ -165,27 +230,7 @@ def render_tables():
             df_view = df[render_cols].sort_values(by=active_col, ascending=not tabel['panah_bawah']).reset_index(drop=True)
             df_berwarna = beri_warna_tabel(df_view, tabel['warna'], tabel['panah_bawah'], target_col=active_col)
             
-            # --- PERBAIKAN: Konfigurasi Kolom untuk Mencegah Judul Terlalu Panjang di Tab 1 ---
-            config_kolom_tab1 = {
-                "Kecamatan": st.column_config.TextColumn("Kecamatan", width="medium")
-            }
-            for col in kolom_tampil:
-                col_singkat = col if len(col) <= 15 else col[:15] + "..."
-                # Kembali menggunakan NumberColumn murni yang lebih aman untuk editor
-                config_kolom_tab1[col] = st.column_config.NumberColumn(
-                    label=col_singkat,
-                    help=f"Judul Kolom Utuh: {col}",
-                    width="medium"
-                )
-            
-            edited_df = st.data_editor(
-                df_berwarna, 
-                use_container_width=True, 
-                hide_index=True, 
-                disabled=disabled_cols, 
-                key=f"editor_{tabel_id}",
-                column_config=config_kolom_tab1
-            )
+            edited_df = st.data_editor(df_berwarna, use_container_width=True, hide_index=True, disabled=disabled_cols, key=f"editor_{tabel_id}")
             
             df_kembali_standar = edited_df[edit_cols].set_index('Kecamatan').reindex(DAFTAR_KECAMATAN).reset_index()
             data_baru = df_kembali_standar.to_dict(orient='list')
