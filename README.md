@@ -1,82 +1,124 @@
-# 🏔️ MURIA: Mesin Utama Rencana & Intervensi Area
+# 🏔️ MURIA: Multidimensional Regional Intelligent Analytics
 
-Aplikasi web pintar ini dibangunkan khusus untuk Badan Perencanaan Pembangunan, Riset, dan Inovasi Daerah (**Bapperida**) Kabupaten Kudus untuk membantu proses pembuatan keputusan dan penentuan prioritas wilayah (Kecamatan). Aplikasi ini menggabungkan dua metodologi utama:
 
-1. **Metode Penilaian (Scoring)** tradisional untuk pemeringkatan data berdasarkan kriteria.
-2. **K-Means Clustering (Kecerdasan Buatan)** untuk pembagian zona prioritas secara spasial.
+Aplikasi berbasis web ini dikembangkan secara khusus untuk **Badan Perencanaan Pembangunan, Riset, dan Inovasi Daerah (Bapperida)** Kabupaten Kudus. Sistem ini bertujuan untuk membantu proses pengambilan keputusan serta penentuan prioritas wilayah (Kecamatan) melalui pendekatan saintifik.
+
+Aplikasi ini menggabungkan dua metodologi utama:
+
+1. **Metode Penilaian (Scoring):** Pemeringkatan data secara tradisional berdasarkan kriteria yang ditentukan.
+2. **K-Means Clustering (Kecerdasan Buatan):** Pembagian zona prioritas secara spasial menggunakan algoritma komputasi tingkat lanjut.
+
+## 📖 Buku Panduan Penggunaan (Tutorial)
+
+Aplikasi MURIA dirancang dengan alur kerja yang berurutan, dimulai dari Tab 1 hingga Tab 3. Mohon ikuti panduan di bawah ini untuk mendapatkan hasil analisis yang optimal.
+
+### Langkah Pra-Syarat: Pengaturan Ruang Kerja (Sangat Direkomendasikan)
+Sebelum memulai pengisian data, Bapak/Ibu dapat menentukan apakah akan bekerja di ruang publik (terlihat oleh semua orang) atau ruang kerja privat.
+1. Perhatikan menu navigasi di sebelah kiri layar (Sidebar).
+2. Gulir layar ke bagian paling bawah, lalu klik pada menu **"⚙️ Pengaturan Ruang Kerja Lanjutan".**
+3. Pada kolom **"Kunci Proyek"**, silakan ketikkan nama Bapak/Ibu atau nama divisi (contoh: `banjir_2026` atau `budi_rahasia`), kemudian tekan tombol *Enter* pada keyboard.
+4. Sistem akan memuat ulang halaman menjadi ruang kerja yang bersih dan baru. Kini Bapak/Ibu berada di ruang kerja privat yang aman dari gangguan perubahan data oleh staf lain. Jika Bapak/Ibu ingin berkolaborasi (mengerjakan data yang sama dengan rekan kerja), cukup berikan Kunci Proyek tersebut kepada rekan Bapak/Ibu.
+
+### Langkah 1: Input Data Indikator (Tab 1)
+
+Halaman ini adalah pusat pengelolaan data. Bapak/Ibu dipersilakan untuk memasukkan data statistik (seperti tingkat kemiskinan, jumlah sekolah, dll) per kecamatan. Terdapat dua pilihan metode pengisian:
+* Tambah Data Manual: Klik tombol `+ Tambah Indikator (Manual)`, ketikkan judul tabel, lalu masukkan angka satu per satu secara manual.
+* Impor Otomatis (Sangat Disarankan): Klik tombol `📁 Ambil dari Excel/CSV`. Unggah file data BPS yang Bapak/Ibu miliki.
+   * ⚠️ Catatan Penting saat Impor Data: Apabila pada pratinjau tabel terdapat kolom dengan nama aneh seperti `Unnamed: 0` atau `Unnamed: 1`, hal tersebut terjadi karena file Excel Bapak/Ibu memiliki kop surat di baris paling atas. Untuk memperbaikinya, silakan naikkan angka pada menu **"📌 Baris Judul Kolom (Header)"** (misalnya menjadi baris 2 atau 3) hingga pratinjau tabel menampilkan nama kolom dengan benar (misal: "Kecamatan", "Jumlah Penduduk").
+Setelah tabel berhasil dibuat, Bapak/Ibu dapat menggunakan menu **"📌 Pengaturan Urutan"** di dalam kotak tabel untuk menentukan kriteria data: apakah nilai yang semakin besar dianggap semakin baik, atau sebaliknya.
+
+### Langkah 2: Melihat Peringkat & Proporsi (Tab 2)
+
+Setelah seluruh data indikator selesai diinput di Tab 1, silakan buka Tab 2.
+1. Sistem akan secara otomatis menghitung skor total akumulasi dari seluruh indikator yang telah dimasukkan.
+2. Kecamatan dengan perolehan skor tertinggi akan menduduki peringkat teratas sebagai prioritas intervensi utama.
+3. Bapak/Ibu juga dapat melihat perbandingan komposisi antar kecamatan melalui visualisasi grafik Pie Chart.
+4. Tersedia tombol **"Unduh Laporan Excel"** apabila Bapak/Ibu membutuhkan format tabel cetak untuk keperluan lampiran dokumen rapat.
+
+### Langkah 3: Eksekusi Kecerdasan Buatan & Pemetaan (Tab 3)
+
+Halaman ini merupakan tahap akhir analisis yang menggunakan teknologi Kecerdasan Buatan (AI).
+1. **Pengaturan Batas Peta:** Tentukan jumlah pembagian zona (2, 3, atau 4 zona). Semakin banyak zona yang dipilih, semakin detail pembagian wilayah prioritasnya.
+2. **Pengaturan Bobot (Weighting):** Bapak/Ibu dapat menggeser slider bobot untuk memberikan prioritas lebih tinggi pada indikator tertentu (misalnya: tingkat kemiskinan diberi bobot 10, sedangkan jumlah jalan diberi bobot 1).
+3. **Sensitivitas Algoritma:** Pengaturan ini berfungsi untuk menentukan tingkat "ketegasan" sistem. Angka yang semakin tinggi akan membuat suatu wilayah lebih sulit dimasukkan ke zona kritis, kecuali kondisinya benar-benar sangat parah.
+4. **Analisis Peta:** Peta interaktif di sebelah kanan akan menampilkan wilayah Kabupaten Kudus yang telah diwarnai sesuai dengan zona prioritasnya (Merah = Kritis, Kuning/Hijau = Aman).
+5. Bapak/Ibu dapat mengunduh **"Peta Interaktif (.html)"** atau **"Laporan Anggota Klaster (.xlsx)"** untuk keperluan bahan presentasi pimpinan.
+
+### Langkah 4: Penyimpanan Data Cadangan (Sangat Penting)
+
+Aplikasi yang berada di server cloud melakukan pembersihan memori secara berkala. Untuk memastikan data hasil kerja keras Bapak/Ibu tidak hilang, mohon lakukan langkah berikut sebelum menutup browser:
+1. Kembali ke halaman **Tab 1**.
+2. Klik menu lipat bernama **"💾 Simpan / Muat Proyek Offline (.json)"**.
+3. Klik tombol **"📥 Unduh Proyek (.json)"**.
+4. File tersebut akan tersimpan secara permanen di dalam laptop atau flashdisk Bapak/Ibu. Apabila esok hari Bapak/Ibu ingin melanjutkan pekerjaan, cukup unggah kembali file tersebut menggunakan fitur "Muat Proyek" di menu yang sama. Data akan langsung kembali seperti semula.
 
 ## ✨ Fitur Utama
 
 ### 🤝 Keamanan Data & Kolaborasi
-* **Ruang Kerja Terisolasi (Project Key):** Memungkinkan banyak staf bekerja secara aman dan mandiri. Dengan memasukkan "Kunci Proyek" rahasia di menu pengaturan lanjutan, setiap sesi kerja akan memiliki workspace datanya masing-masing sehingga tidak saling menimpa.
-* **Ekspor & Impor Proyek Offline (.json):** Fitur penyimpanan (backup) tangguh untuk mengunduh seluruh tabel indikator dan pengaturan bobot AI ke dalam komputer lokal/flashdisk. Menjamin data 100% aman dan dapat dilanjutkan kapan saja meskipun server pusat mengalami restart.
+* **Ruang Kerja Privat (Project Key):** Memfasilitasi pengerjaan secara mandiri oleh banyak staf tanpa risiko saling menghapus data. Sistem menggunakan kata kunci (Project Key) untuk mengisolasi setiap sesi pengerjaan.
+* **Ekspor & Impor Cadangan Offline (.json):** Sistem perlindungan data tingkat tinggi yang memungkinkan pengguna mengunduh seluruh progres pekerjaan ke komputer masing-masing. Menjamin data 100% aman meskipun terjadi gangguan pada server pusat.
 
 ### 🏠 Beranda Executive (Modul Utama)
-* **Ringkasan Eksekutif:** Menampilkan *Key Performance Indicators* (KPI) seperti jumlah indikator yang dianalisis dan status sistem AI.
-* **Deteksi Zona Kritis Dinamis:** AI secara otomatis menghitung dan menampilkan jumlah kecamatan yang berada dalam zona paling kritis.
-* **Top 5 Prioritas:** Grafik batang (*Bar Chart*) interaktif yang menampilkan 5 kecamatan teratas yang membutuhkan intervensi (mendukung penanganan nilai poin yang sama/seri).
+* **Ringkasan Eksekutif & Deteksi Zona Kritis:** Menampilkan Indikator Kinerja Utama (KPI) serta memberikan peringatan dini mengenai jumlah kecamatan yang terdeteksi masuk ke dalam zona paling kritis.
+* **Prioritas Utama (Top 5):** Menyajikan grafik batang (Bar Chart) interaktif yang menyoroti 5 kecamatan dengan urgensi penanganan tertinggi.
 
 ### 📝 Tab 1: Input Data Indikator (Modul Input)
-* **Auto Import Pintar:** Mendukung unggah file CSV/Excel dengan fungsi penyesuaian baris judul (*Header*) untuk menghindari error `Unnamed column`.
-* **Pembersihan Data (Sanitasi) Otomatis:** Sistem membersihkan data kotor dari BPS secara otomatis (seperti sel kosong, tanda strip `-`, atau pemisah koma) menjadi angka murni (`0`).
-* **Editor Tabel Interaktif:** Data dapat diedit secara langsung dengan fitur *Undo/Redo* kolom, pengaturan arah urutan (Terkecil/Terbesar), dan format pemisah ribuan otomatis.
+* **Sistem Impor Cerdas:** Dilengkapi dengan algoritma pendeteksi baris judul otomatis dan pembersihan data (data sanitization). Sistem secara cerdas akan mengabaikan karakter yang tidak valid (seperti sel kosong atau tanda hubung/strip) dari data BPS.
+* **Modifikasi Interaktif:** Terdapat fitur pengembalian langkah (Undo/Redo) apabila terjadi kesalahan, serta pemformatan angka ribuan secara otomatis untuk kemudahan membaca data.
 
-### 🏆 Tab 2: Peringkat Akumulasi/Scoring (Modul Penilaian)
-* **Sistem Poin Terpusat:** Mengubah peringkat sektoral menjadi poin akumulasi untuk menentukan prioritas utama secara otomatis.
-* **Visualisasi Proporsi:** Visualisasi *Pie Chart* interaktif menggunakan Plotly untuk melihat perbandingan angka mentah antar kecamatan.
-* **Ekspor Laporan:** Tabel hasil peringkat dapat diunduh langsung ke dalam format **Excel (.xlsx)**.
+### 🏆 Tab 2: Peringkat Akumulasi (Modul Penilaian)
+* **Sistem Penilaian Terpusat:** Melakukan rekapitulasi poin dari seluruh indikator sektoral menjadi satu nilai ukur akumulatif yang mudah dipahami.
+* **Visualisasi Proporsional:** Dilengkapi dengan grafik Plotly untuk menampilkan komposisi persentase data antar wilayah kecamatan.
 
 ### 🗺️ Tab 3: AI Peta Zonasi / K-Means (Modul AI)
-* **Klastering Multi-Dimensi:** Memanfaatkan algoritma *K-Means* dari `scikit-learn` untuk mengelompokkan wilayah ke dalam 2 hingga 4 zona secara otomatis.
-* **Peta WebGIS Interaktif:** Menghasilkan peta Kudus interaktif menggunakan `folium` yang memvisualisasikan zona prioritas melalui warna.
-* **Ekspor Ganda:** Mendukung pengunduhan Peta sebagai file **HTML Interaktif** (bisa dibuka secara *offline*) dan unduh tabel rincian anggota klaster dalam format **Excel (.xlsx)**.
+* **Klastering Multi-Dimensi:** Menerapkan algoritma K-Means dari pustaka `scikit-learn` untuk mengelompokkan wilayah berdasarkan kedekatan variabel statistik secara spasial.
+* **Pemetaan WebGIS Terpadu:** Terintegrasi dengan `folium` untuk menghasilkan visualisasi peta poligon (Polygon WebGIS) yang presisi.
 
 ## 📂 Struktur File (Modular)
 
-* `app.py` - File utama (*Entry point*) yang menjalankan aplikasi Streamlit dan mengatur navigasi *sidebar*.
-* `requirements.txt` - Daftar dependensi *library* Python untuk *server*.
-* `data/` - Folder penyimpanan basis data lokal (JSON) dan data batas wilayah GeoJSON.
-* `utils/` - Folder file utilitas (fungsi bantuan, manajemen *session state*, dan pewarnaan tabel).
-* `views/` - Folder antarmuka pengguna (UI) yang dipecah menjadi 4 sub-modul utama: `home`, `tab1_input`, `tab2_scoring`, dan `tab3_kmeans`.
+* `app.py` - Berkas utama (Entry point) yang menjalankan kerangka kerja Streamlit serta mengatur alur navigasi aplikasi.
+* `requirements.txt` - Daftar pustaka bahasa pemrograman Python yang diwajibkan untuk menjalankan server.
+* `data/` - Direktori penyimpanan basis data lokal sementara serta berkas geometri batas wilayah (GeoJSON).
+* `utils/` - Direktori berkas utilitas pendukung (fungsi matematis, manajemen status aplikasi, dan pewarnaan tabel).
+* `views/` - Direktori antarmuka pengguna (UI) yang dirancang secara modular menjadi 4 bagian: `home`, `tab1_input`, `tab2_scoring`, dan `tab3_kmeans`.
 
 ## 🛠️ Teknologi yang Digunakan
 
-* [**Python 3**](https://www.python.org/) - Bahasa pemrograman utama.
-* [**Streamlit**](https://streamlit.io/) - *Framework* antarmuka web.
-* [**Pandas & NumPy**](https://pandas.pydata.org/) - Manipulasi dan analisis struktur data tabel.
-* [**Scikit-Learn**](https://scikit-learn.org/) - *Machine Learning* / algoritma AI (`KMeans`).
-* [**Folium & Streamlit-Folium**](https://python-visualization.github.io/folium/) - Untuk visualisasi peta spasial interaktif.
-* [**Plotly Express**](https://plotly.com/python/) - Pembuatan grafik dan *chart* interaktif.
+* [**Python 3**](https://www.python.org/) - Bahasa pemrograman penyusun logika sistem.
+* [**Streamlit**](https://streamlit.io/) - Kerangka kerja pembentuk antarmuka aplikasi web.
+* [**Pandas & NumPy**](https://pandas.pydata.org/) - Pustaka utama untuk komputasi numerik dan pengolahan struktur tabel.
+* [**Scikit-Learn**](https://scikit-learn.org/) - Pustaka algoritma Machine Learning untuk fungsi Kecerdasan Buatan.
+* [**Folium & Streamlit-Folium**](https://python-visualization.github.io/folium/) - Perangkat lunak untuk visualisasi peta spasial interaktif (WebGIS).
+* [**Plotly Express**](https://plotly.com/python/) - Perangkat lunak perancang grafik interaktif tingkat lanjut.
 
 ---
 
-## 🌐 Akses Aplikasi & Deployment (Hosting)
+## 🌐 Akses Aplikasi & Pedoman Rilis (Deployment)
 
-### ☁️ Tautan Uji Coba (Streamlit Cloud)
-Aplikasi uji coba (*prototype*) ini telah di-*deploy* ke publik untuk keperluan presentasi dan UAT (*User Acceptance Test*). 
-**Aplikasi ini bisa diakses di:** [Silakan masukkan link Streamlit Anda di sini]
+### ☁️ Tautan Akses Aplikasi (Streamlit Cloud)
+Prototipe aplikasi ini telah diluncurkan secara publik guna keperluan uji coba (User Acceptance Test) dan pemaparan.
+**Bapak/Ibu dapat mengakses aplikasi melalui tautan berikut:** https://muria-bapperida.streamlit.app/
 
-### 🏢 Deployment via Server Kominfo (On-Premise / Rilis Resmi)
-Metode ini diwajibkan untuk rilis akhir (*Production*) guna menjaga kedaulatan data pemerintahan dan mendukung penggunaan domain resmi `.go.id`. Panduan ini ditujukan untuk Administrator Jaringan/Server Kominfo Kabupaten Kudus.
+### 🏢 Pedoman Rilis pada Server Kominfo (On-Premise / Resmi)
+Prosedur di bawah ini ditujukan khusus bagi **Administrator Jaringan / Tenaga IT Dinas Kominfo** Kabupaten Kudus untuk persiapan rilis akhir *(Production)* di server internal pemerintah.
 
-1. **Persiapan Server:** Pastikan OS Server (Ubuntu/Debian) sudah memiliki akses internet, SSH, dan menginstal **Python 3.10+**.
-2. **Tarik Kode Sumber (*Pull Code*):**
+1. **Persiapan Server:** Pastikan sistem operasi Server (Ubuntu/Debian) telah terhubung dengan jaringan internet, mendukung akses SSH, serta terpasang **Python versi 3.10 atau lebih baru**.
+2. **Pengunduhan Kode Sumber (*Clone Repository*):**
    ```bash
    git clone [https://github.com/username-anda/muria-bapperida-kudus.git](https://github.com/username-anda/muria-bapperida-kudus.git)
    cd muria-bapperida-kudus
    ```
-3. **Instalasi Virtual Environment & Library:**
-   Sangat disarankan menjalankan aplikasi di dalam Virtual Environment (vEnv) agar tidak merusak library sistem OS.
+3. **Pemasangan Lingkungan Virtual *(Virtual Environment)*:**
+   Guna menjaga stabilitas library bawaan sistem operasi, sangat diwajibkan untuk memasang aplikasi di dalam *Virtual Environment.*
    ```bash
    python3 -m venv venv
    source venv/bin/activate
    pip install -r requirements.txt
    ```
-4. **Instalasi Virtual Environment & Library:**
-   Agar aplikasi tidak mati saat koneksi SSH ditutup, gunakan Process Manager seperti `Tmux` atau buatkan `systemd service`.
-   Contoh perintah sederhana untuk menjalankan aplikasi di port spesifik:
+4. **Eksekusi Aplikasi:**
+   Gunakan manajer proses seperti `Tmux` atau daftarkan aplikasi sebagai `systemd service` agar sistem tetap berjalan di latar belakang meskipun koneksi SSH diputus.
    ```bash
    streamlit run app.py --server.port 8501
    ```
-5. **Reverse Proxy & Konfigurasi Domain:**
-Konfigurasikan Nginx atau Apache di server untuk meneruskan (forward) trafik dari domain resmi Bapperida (misal: https://muria.kuduskab.go.id) menuju ke port localhost:8501 tempat aplikasi ini berjalan.
+5. **Konfigurasi Reverse Proxy & Domain:**
+Lakukan penyesuaian pada Nginx atau Apache untuk meneruskan *(forwarding)* lalu lintas jaringan dari domain resmi Bapperida (sebagai contoh: `https://muria.kuduskab.go.id`) menuju ke alamat `localhost:8501` tempat aplikasi ini beroperasi.
