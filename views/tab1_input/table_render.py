@@ -25,13 +25,17 @@ def render_tables():
             }
             json_string = json.dumps(project_data, indent=4)
             
+            # Mengambil nama project key yang sedang aktif untuk nama file
+            current_key = st.session_state.get('project_key', 'publik')
+            nama_file_unduh = f"Backup_{current_key.capitalize()}.json"
+            
             st.download_button(
                 label="📥 Unduh Proyek (.json)",
                 data=json_string,
-                file_name="Backup_Proyek_MURIA.json",
+                file_name=nama_file_unduh,
                 mime="application/json",
                 use_container_width=True,
-                help="Unduh seluruh tabel dan pengaturan bobot AI Anda menjadi satu file."
+                help=f"Unduh seluruh tabel dan pengaturan ke dalam file bernama {nama_file_unduh}."
             )
             
         with col_import:
@@ -100,6 +104,7 @@ def render_tables():
                 tabel['hapus_jumlah'] = state['hapus_jumlah']
                 tabel['active_sort_col'] = state['active_sort_col']
                 simpan_data(st.session_state.koleksi_tabel)
+                st.session_state.pop('hasil_kmeans', None) # Hapus cache AI agar sinkron
                 st.rerun()
 
             if top_col_redo.button("↪️ Redo", key=f"redo_{tabel_id}", disabled=not can_redo, help="Majukan riwayat kolom", use_container_width=True):
@@ -110,6 +115,7 @@ def render_tables():
                 tabel['hapus_jumlah'] = state['hapus_jumlah']
                 tabel['active_sort_col'] = state['active_sort_col']
                 simpan_data(st.session_state.koleksi_tabel)
+                st.session_state.pop('hasil_kmeans', None) # Hapus cache AI agar sinkron
                 st.rerun()
                 
             # Tombol Tambah Kolom
@@ -124,6 +130,7 @@ def render_tables():
             if top_col3.button("❌ Hapus", key=f"btn_hapus_tabel_{tabel_id}", help="Hapus Tabel Ini Total", disabled=is_form_open, use_container_width=True):
                 st.session_state.koleksi_tabel.pop(i)
                 simpan_data(st.session_state.koleksi_tabel) 
+                st.session_state.pop('hasil_kmeans', None) # Hapus cache AI agar sinkron
                 st.rerun()
 
             # TAMPILKAN FORM TAMBAH KOLOM
@@ -144,6 +151,7 @@ def render_tables():
                 st.info("Semua kolom telah dihapus. Menghapus tabel secara otomatis...")
                 st.session_state.koleksi_tabel.pop(i)
                 simpan_data(st.session_state.koleksi_tabel)
+                st.session_state.pop('hasil_kmeans', None) # Hapus cache AI agar sinkron
                 st.rerun()
                 continue 
 
@@ -165,6 +173,7 @@ def render_tables():
                         st.session_state.koleksi_tabel[i]['active_sort_col'] = sort_choice
                         st.session_state.koleksi_tabel[i]['panah_bawah'] = is_panah_bawah
                         simpan_data(st.session_state.koleksi_tabel)
+                        st.session_state.pop('hasil_kmeans', None) # Hapus cache AI agar sinkron
                         st.rerun()
                         
             with ctrl2:
@@ -203,6 +212,7 @@ def render_tables():
                             st.session_state.koleksi_tabel[i]['history_index'] += 1
                             
                             simpan_data(st.session_state.koleksi_tabel)
+                            st.session_state.pop('hasil_kmeans', None) # Hapus cache AI agar sinkron
                             st.rerun()
 
             df = pd.DataFrame(tabel['data'])
@@ -243,6 +253,7 @@ def render_tables():
                     st.session_state.koleksi_tabel[i]['history'][idx_hist]['data'] = copy.deepcopy(data_baru)
                     
                 simpan_data(st.session_state.koleksi_tabel) 
+                st.session_state.pop('hasil_kmeans', None) # Hapus cache AI agar sinkron
                 st.rerun()
 
             st.write("")
