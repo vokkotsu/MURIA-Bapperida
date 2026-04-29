@@ -1,6 +1,5 @@
 # 🏔️ MURIA: Multidimensional Regional Intelligent Analytics
 
-
 Aplikasi berbasis web ini dikembangkan secara khusus untuk **Badan Perencanaan Pembangunan, Riset, dan Inovasi Daerah (Bapperida)** Kabupaten Kudus. Sistem ini bertujuan untuk membantu proses pengambilan keputusan serta penentuan prioritas wilayah (Kecamatan) melalui pendekatan saintifik.
 
 Aplikasi ini menggabungkan dua metodologi utama:

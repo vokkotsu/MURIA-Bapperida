@@ -10,7 +10,7 @@ from views.tab3_kmeans import render_tab3
 from views.panduan import render_panduan
 
 # --- PENGATURAN HALAMAN ---
-st.set_page_config(page_title="MURIA Bapperida", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="MURIA Bapperida", page_icon="🏔️", layout="wide", initial_sidebar_state="expanded")
 
 # --- INJEKSI CSS KUSTOM (MENGECILKAN SIDEBAR) ---
 st.markdown("""
@@ -33,6 +33,9 @@ init_session_state()
 
 # --- SIDEBAR NAVIGASI BAWAAN (STABIL) ---
 with st.sidebar:
+    # Menambahkan kembali logo Kabupaten Kudus agar tetap profesional
+    st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Lambang_Kabupaten_Kudus.png/409px-Lambang_Kabupaten_Kudus.png", width=80)
+    
     st.title("🏔️ MURIA Bapperida")
     st.markdown("Pilih menu di bawah ini untuk berpindah halaman.")
     st.markdown("---")
@@ -46,35 +49,37 @@ with st.sidebar:
         "📖 Panduan Sistem"
     ]
 
-    # Menangani URL Query Parameters agar saat direfresh tidak kembali ke awal
+    # MENGAMBIL PARAMETER URL (Untuk mendeteksi tombol Back Browser)
     try:
-        query_params = st.query_params
-        default_menu = query_params.get("menu", menu_list[0])
-        if default_menu not in menu_list:
-            default_menu = menu_list[0]
+        url_menu = st.query_params.get("menu", menu_list[0])
     except AttributeError:
-        query_params = st.experimental_get_query_params()
-        default_menu = query_params.get("menu", [menu_list[0]])[0]
-        if default_menu not in menu_list:
-            default_menu = menu_list[0]
+        url_params = st.experimental_get_query_params()
+        url_menu = url_params.get("menu", [menu_list[0]])[0]
 
-    if "active_menu_selector" not in st.session_state:
-        st.session_state.active_menu_selector = default_menu
+    # Validasi menu dari URL
+    if url_menu not in menu_list:
+        url_menu = menu_list[0]
+        
+    # Sinkronisasi state internal dengan URL yang baru dibaca
+    st.session_state.active_menu_selector = url_menu
 
-    def ganti_menu(menu_baru):
-        st.session_state.active_menu_selector = menu_baru
+    # Callback untuk tombol menu
+    def set_menu(menu_tujuan):
+        st.session_state.active_menu_selector = menu_tujuan
         try:
-            st.query_params["menu"] = menu_baru
+            st.query_params["menu"] = menu_tujuan
+            # Bersihkan subpage jika berpindah menu utama
+            if "subpage" in st.query_params:
+                del st.query_params["subpage"]
         except AttributeError:
-            st.experimental_set_query_params(menu=menu_baru)
+            st.experimental_set_query_params(menu=menu_tujuan)
 
-    # Membuat tombol native Streamlit yang dijamin responsif (tanpa double click)
+    # Membuat tombol native Streamlit yang dijamin responsif
     for menu in menu_list:
         tipe_tombol = "primary" if st.session_state.active_menu_selector == menu else "secondary"
         
-        if st.button(menu, type=tipe_tombol, use_container_width=True):
-            ganti_menu(menu)
-            st.rerun() # Memaksa halaman langsung dimuat ulang seketika
+        # Ganti logika ke on_click agar state ter-update sebelum halaman dimuat ulang!
+        st.button(menu, type=tipe_tombol, use_container_width=True, on_click=set_menu, args=(menu,))
     
     st.markdown("---")
     
@@ -114,13 +119,13 @@ elif selected_menu == menu_list[2]:
 elif selected_menu == menu_list[3]:
     render_tab3()
 elif selected_menu == menu_list[4]:
-    render_panduan()
+    render_panduan() 
 
-# GLOBAL FOOTER & WATERMARK
+# FITUR BARU: GLOBAL FOOTER & WATERMARK
 st.markdown("""
     <div style="margin-top: 5rem; padding-top: 2rem; border-top: 1px solid #e6e6e6; text-align: center; color: #888;">
         <p style="margin-bottom: 0px; font-size: 0.9rem;">
-            <b>MURIA (Mesin Utama Rencana & Intervensi Area) v1.0.0</b>
+            <b>MURIA (Multidimensional Regional Intelligent Analytics) v1.0.0</b>
         </p>
         <p style="font-size: 0.8rem; margin-top: 5px;">
             &copy; 2026 Badan Perencanaan Pembangunan, Riset, dan Inovasi Daerah (Bapperida) Kabupaten Kudus.<br>

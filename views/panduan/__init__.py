@@ -8,16 +8,13 @@ def set_panduan_page(halaman_tujuan):
     st.session_state.panduan_page = halaman_tujuan
     
     # --- SINKRONISASI KE BROWSER URL ---
-    # Ini adalah kunci agar tombol 'Back' bawaan browser ikut berfungsi!
     try:
         if halaman_tujuan == 'menu':
-            # Jika kembali ke menu, hapus parameter subpage agar URL lebih bersih
             if 'subpage' in st.query_params:
                 del st.query_params['subpage']
         else:
             st.query_params["subpage"] = halaman_tujuan
     except AttributeError:
-        # Fallback untuk Streamlit versi lama
         if halaman_tujuan == 'menu':
             st.experimental_set_query_params(menu=st.session_state.get('active_menu_selector', '📖 Panduan Sistem'))
         else:
@@ -36,7 +33,6 @@ def render_panduan():
 
     halaman_valid = ['menu', 'cara_penggunaan', 'glosarium', 'faq', 'info']
     
-    # PENTING: Selalu ikuti jejak URL browser (merespons ketukan tombol Back Browser)
     if page_dari_url in halaman_valid:
         st.session_state.panduan_page = page_dari_url
     else:
@@ -46,101 +42,36 @@ def render_panduan():
     if st.session_state.panduan_page == 'menu':
         tampilkan_menu_utama()
     elif st.session_state.panduan_page == 'cara_penggunaan':
-        tampilkan_cara_penggunaan()
+        baca_file_markdown("README.md")
     elif st.session_state.panduan_page == 'glosarium':
-        tampilkan_glosarium()
+        baca_file_markdown("GLOSARIUM.md")
     elif st.session_state.panduan_page == 'faq':
-        tampilkan_faq()
+        tampilkan_faq_native() # Menggunakan komponen bawaan Streamlit
     elif st.session_state.panduan_page == 'info':
-        tampilkan_info()
+        baca_file_markdown("INFO.md")
 
 # ==========================================
-# KOMPONEN UI UTAMA
+# FUNGSI PEMBACA MARKDOWN (Pemisahan Konten)
 # ==========================================
-
-def tombol_kembali():
-    """Menampilkan tombol kembali ke menu grid."""
-    # Menggunakan on_click dan key dinamis untuk mencegah error state Streamlit
-    st.button(
-        "⬅️ Kembali ke Menu Utama Panduan", 
-        type="secondary", 
-        key=f"back_btn_{st.session_state.panduan_page}",
-        on_click=set_panduan_page, 
-        args=('menu',)
-    )
-    st.markdown("---")
-
-def tampilkan_menu_utama():
-    st.title("📚 Pusat Dokumentasi & Bantuan")
-    st.markdown("Pilih topik di bawah ini untuk mempelajari lebih lanjut tentang cara kerja dan penggunaan aplikasi MURIA Bapperida.")
-    st.write("") # Spasi
-    
-    # Membuat Grid 2 Kolom
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        # Kartu 1: Cara Penggunaan (README)
-        with st.container(border=True):
-            st.subheader("📖 Cara Penggunaan")
-            st.markdown("<p style='color: #666;'>Buku panduan lengkap langkah demi langkah mulai dari persiapan ruang kerja hingga ekspor peta hasil akhir.</p>", unsafe_allow_html=True)
-            st.button("Baca Panduan ➔", key="btn_cara", use_container_width=True, on_click=set_panduan_page, args=('cara_penggunaan',))
-                
-        # Kartu 3: FAQ
-        with st.container(border=True):
-            st.subheader("❓ FAQ (Tanya Jawab)")
-            st.markdown("<p style='color: #666;'>Kumpulan solusi dan jawaban atas kendala teknis yang paling sering dialami oleh pengguna sistem.</p>", unsafe_allow_html=True)
-            st.button("Lihat FAQ ➔", key="btn_faq", use_container_width=True, on_click=set_panduan_page, args=('faq',))
-
-    with col2:
-        # Kartu 2: Glosarium
-        with st.container(border=True):
-            st.subheader("📑 Glosarium Istilah")
-            st.markdown("<p style='color: #666;'>Kamus istilah teknis (seperti <i>K-Means</i>, <i>Scoring</i>, <i>Cost/Benefit</i>) agar mudah dipahami oleh kalangan non-IT.</p>", unsafe_allow_html=True)
-            st.button("Buka Glosarium ➔", key="btn_glosarium", use_container_width=True, on_click=set_panduan_page, args=('glosarium',))
-                
-        # Kartu 4: Info Sistem & Disclaimer
-        with st.container(border=True):
-            st.subheader("⚖️ Informasi Sistem")
-            st.markdown("<p style='color: #666;'>Pernyataan penyangkalan hukum (Disclaimer) dan rincian versi rilis dari aplikasi DSS MURIA.</p>", unsafe_allow_html=True)
-            st.button("Buka Informasi ➔", key="btn_info", use_container_width=True, on_click=set_panduan_page, args=('info',))
-
-
-# ==========================================
-# KONTEN SUB-HALAMAN
-# ==========================================
-
-def tampilkan_cara_penggunaan():
+def baca_file_markdown(nama_file):
+    """Fungsi universal untuk merender teks dari file Markdown."""
     tombol_kembali()
-    readme_path = "README.md"
-    if os.path.exists(readme_path):
+    if os.path.exists(nama_file):
         try:
-            with open(readme_path, "r", encoding="utf-8") as file:
-                isi_readme = file.read()
-                st.markdown(isi_readme, unsafe_allow_html=True)
+            with open(nama_file, "r", encoding="utf-8") as file:
+                isi_markdown = file.read()
+                st.markdown(isi_markdown, unsafe_allow_html=True)
         except Exception as e:
-            st.error(f"Terjadi kesalahan saat memuat dokumen panduan: {e}")
+            st.error(f"Terjadi kesalahan saat memuat dokumen {nama_file}: {e}")
     else:
-        st.warning("⚠️ File README.md tidak ditemukan di dalam sistem.")
+        st.warning(f"⚠️ File {nama_file} tidak ditemukan di dalam direktori proyek.")
 
-def tampilkan_glosarium():
-    tombol_kembali()
-    st.title("📑 Glosarium (Kamus Istilah Teknis)")
-    st.markdown("Penjelasan bahasa sederhana untuk istilah teknis yang digunakan di dalam aplikasi:")
-    
-    st.markdown("""
-    * **K-Means Clustering:** Algoritma kecerdasan buatan yang mengelompokkan data ke dalam beberapa "zona" atau "klaster". Algoritma ini mencari wilayah-wilayah yang memiliki karakteristik statistik yang mirip lalu menyatukannya ke dalam satu warna zona yang sama.
-    * **Cost & Benefit (Arah Urutan):** * **Cost (Makin Rendah Makin Baik):** Indikator yang berdampak buruk jika angkanya tinggi. Contoh: Tingkat Kemiskinan, Angka Pengangguran, Jumlah Bencana.
-        * **Benefit (Makin Tinggi Makin Baik):** Indikator yang berdampak baik jika angkanya tinggi. Contoh: Jumlah Sekolah, Angka Harapan Hidup, PDRB.
-    * **Project Key (Kunci Proyek):** Kata sandi rahasia yang berfungsi sebagai pembatas ruang kerja. Pengguna dengan Kunci Proyek yang berbeda tidak akan bisa melihat data satu sama lain (isolasi data).
-    * **Sensitivitas Batas Zona (Power Transformation):** Pengaturan ketegasan mesin AI. Jika sensitivitas dinaikkan, AI akan lebih "pelit" dalam memasukkan sebuah kecamatan ke zona kritis. Hanya kecamatan yang statistiknya *benar-benar buruk* yang akan masuk ke zona prioritas utama.
-    * **Data Sanitization (Sanitasi Data):** Proses otomatis di belakang layar yang membersihkan data kotor dari file Excel BPS (seperti sel kosong, tulisan 'N/A', atau tanda strip) menjadi angka nol agar tidak merusak perhitungan AI.
-    * **WebGIS:** Sistem Informasi Geografis berbasis web yang memungkinkan Anda berinteraksi dengan peta secara langsung di browser tanpa perlu menginstal aplikasi seperti ArcGIS atau QGIS.
-    """)
-
-def tampilkan_faq():
+def tampilkan_faq_native():
+    """Fungsi khusus untuk FAQ menggunakan st.expander bawaan Streamlit agar tidak error."""
     tombol_kembali()
     st.title("❓ Frequently Asked Questions (FAQ)")
-    st.markdown("Solusi untuk masalah yang sering ditemui:")
+    st.markdown("Solusi untuk masalah yang sering ditemui oleh pengguna sistem:")
+    st.write("")
     
     with st.expander("1. Mengapa muncul tulisan 'Unnamed Column' saat saya mengunggah Excel?"):
         st.write("Hal ini terjadi karena file Excel BPS Anda memiliki 'kop surat' atau baris kosong di bagian paling atas. Solusinya: Ubah angka pada pilihan **'📌 Baris Judul Kolom (Header)'** menjadi baris ke-2, ke-3, atau seterusnya hingga nama kolom di pratinjau tabel muncul dengan benar (menampilkan tulisan 'Kecamatan' dll).")
@@ -154,21 +85,44 @@ def tampilkan_faq():
     with st.expander("4. Apakah saya butuh internet untuk membuka file Peta Interaktif (.html) yang diunduh?"):
         st.write("Anda tetap memerlukan koneksi internet yang sangat kecil hanya untuk memuat 'gambar peta dasar' (peta jalannya). Namun data batas wilayah, warna zonasi, dan rincian angkanya sudah tersimpan permanen secara luring (*offline*) di dalam file HTML tersebut.")
 
-def tampilkan_info():
-    tombol_kembali()
-    st.title("⚖️ Informasi Sistem & Disclaimer")
-    
-    st.info("**Sistem Pendukung Keputusan (DSS) Bapperida Kabupaten Kudus**", icon="ℹ️")
-    
-    st.markdown("### Pernyataan Penyangkalan (Disclaimer)")
-    st.markdown("""
-    Aplikasi *Multidimensional Regional Intelligent Analytics* (MURIA) adalah instrumen **Sistem Pendukung Keputusan (Decision Support System)** yang dirancang untuk memberikan rekomendasi berbasis analisis data kuantitatif.
-    
-    1. **Sifat Rekomendasi:** Hasil kalkulasi peringkat (Tab 2) dan pembagian zonasi wilayah (Tab 3) murni dihasilkan dari perhitungan matematis dan algoritma *Machine Learning*. Hasil ini **bersifat rekomendasi teknis-akademis** dan bukan merupakan keputusan final yang mengikat secara hukum.
-    2. **Validitas Data:** Akurasi rekomendasi sangat bergantung pada keabsahan dan kebersihan data yang diinput oleh pengguna.
-    3. **Kebijakan Eksekutif:** Keputusan akhir terkait prioritas pembangunan dan intervensi anggaran tetap berada di tangan pimpinan daerah (Bupati / Kepala Bapperida) dengan mempertimbangkan faktor kualitatif di lapangan yang tidak dapat diukur oleh mesin.
-    """)
-    
+# ==========================================
+# KOMPONEN UI UTAMA (MENU GRID)
+# ==========================================
+def tombol_kembali():
+    st.button(
+        "⬅️ Kembali ke Menu Utama Panduan", 
+        type="secondary", 
+        key=f"back_btn_{st.session_state.panduan_page}",
+        on_click=set_panduan_page, 
+        args=('menu',)
+    )
     st.markdown("---")
-    st.caption("Versi Aplikasi: 1.0.0 (Production Release)")
-    st.caption("Dikembangkan secara mandiri menggunakan arsitektur Python Streamlit dan Scikit-Learn.")
+
+def tampilkan_menu_utama():
+    st.title("📚 Pusat Dokumentasi & Bantuan")
+    st.markdown("Pilih topik di bawah ini untuk mempelajari lebih lanjut tentang cara kerja dan penggunaan aplikasi MURIA Bapperida.")
+    st.write("") 
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        with st.container(border=True):
+            st.subheader("📖 Cara Penggunaan")
+            st.markdown("<p style='color: #666;'>Buku panduan lengkap langkah demi langkah mulai dari persiapan ruang kerja hingga ekspor peta hasil akhir.</p>", unsafe_allow_html=True)
+            st.button("Baca Panduan ➔", key="btn_cara", use_container_width=True, on_click=set_panduan_page, args=('cara_penggunaan',))
+                
+        with st.container(border=True):
+            st.subheader("❓ FAQ (Tanya Jawab)")
+            st.markdown("<p style='color: #666;'>Kumpulan solusi dan jawaban atas kendala teknis yang paling sering dialami oleh pengguna sistem.</p>", unsafe_allow_html=True)
+            st.button("Lihat FAQ ➔", key="btn_faq", use_container_width=True, on_click=set_panduan_page, args=('faq',))
+
+    with col2:
+        with st.container(border=True):
+            st.subheader("📑 Glosarium Istilah")
+            st.markdown("<p style='color: #666;'>Kamus istilah teknis (seperti <i>K-Means</i>, <i>Scoring</i>, <i>Cost/Benefit</i>) agar mudah dipahami oleh kalangan non-IT.</p>", unsafe_allow_html=True)
+            st.button("Buka Glosarium ➔", key="btn_glosarium", use_container_width=True, on_click=set_panduan_page, args=('glosarium',))
+                
+        with st.container(border=True):
+            st.subheader("⚖️ Informasi Sistem")
+            st.markdown("<p style='color: #666;'>Pernyataan penyangkalan hukum (Disclaimer) dan rincian versi rilis dari aplikasi DSS MURIA.</p>", unsafe_allow_html=True)
+            st.button("Buka Informasi ➔", key="btn_info", use_container_width=True, on_click=set_panduan_page, args=('info',))
