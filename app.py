@@ -7,6 +7,7 @@ from views.home import render_home
 from views.tab1_input import render_tab1
 from views.tab2_scoring import render_tab2
 from views.tab3_kmeans import render_tab3
+from views.panduan import render_panduan
 
 # --- PENGATURAN HALAMAN ---
 st.set_page_config(page_title="MURIA Bapperida", layout="wide", initial_sidebar_state="expanded")
@@ -41,7 +42,8 @@ with st.sidebar:
         "🏠 Beranda Executive",
         "📝 Input Data Indikator", 
         "🏆 Peringkat Akumulasi",
-        "🗺️ AI Peta Zonasi"
+        "🗺️ AI Peta Zonasi",
+        "📖 Panduan Sistem"
     ]
 
     # Menangani URL Query Parameters agar saat direfresh tidak kembali ke awal
@@ -102,7 +104,7 @@ st.title("📊 MURIA: Multidimensional Regional Intelligent Analytics")
 st.markdown("Aplikasi ini menggabungkan metode *Scoring* tradisional dengan *Machine Learning* (K-Means) untuk menentukan prioritas wilayah secara cerdas.")
 st.markdown("---")
 
-# --- MEMANGGIL TAMPILAN BERDASARKAN MENU ---
+# --- ROUTING HALAMAN APLIKASI ---
 if selected_menu == menu_list[0]:
     render_home()
 elif selected_menu == menu_list[1]:
@@ -111,3 +113,18 @@ elif selected_menu == menu_list[2]:
     render_tab2()
 elif selected_menu == menu_list[3]:
     render_tab3()
+elif selected_menu == menu_list[4]:
+    render_panduan()
+
+# GLOBAL FOOTER & WATERMARK
+st.markdown("""
+    <div style="margin-top: 5rem; padding-top: 2rem; border-top: 1px solid #e6e6e6; text-align: center; color: #888;">
+        <p style="margin-bottom: 0px; font-size: 0.9rem;">
+            <b>MURIA (Mesin Utama Rencana & Intervensi Area) v1.0.0</b>
+        </p>
+        <p style="font-size: 0.8rem; margin-top: 5px;">
+            &copy; 2026 Badan Perencanaan Pembangunan, Riset, dan Inovasi Daerah (Bapperida) Kabupaten Kudus.<br>
+            <i>Sistem Pendukung Keputusan Berbasis Machine Learning.</i>
+        </p>
+    </div>
+""", unsafe_allow_html=True)
