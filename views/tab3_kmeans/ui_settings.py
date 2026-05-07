@@ -57,22 +57,13 @@ def render_pengaturan_ai(df_untuk_ai, df_master, fitur_tersedia):
         if 'hasil_kmeans' in st.session_state:
             del st.session_state['hasil_kmeans']
 
-    # --- FITUR BARU: TOMBOL KOSONGKAN PILIHAN ---
-    col_label, col_clear = st.columns([2, 1])
-    col_label.markdown("**Pilih Indikator yang Dianalisis:**")
-    if col_clear.button("🧹 Kosongkan", use_container_width=True, help="Hapus semua indikator yang terpilih dari kotak di bawah"):
-        st.session_state['ms_fitur_ai'] = []
-        update_fitur_config()
-        st.rerun()
-
     # --- KOTAK PEMILIHAN (MULTISELECT) ---
     fitur_terpilih = st.multiselect(
         "Pilih Indikator yang Dianalisis:", 
         fitur_tersedia, 
         key='ms_fitur_ai',
         on_change=update_fitur_config,
-        placeholder="Klik dan ketik untuk mencari indikator...",
-        label_visibility="collapsed" # Label disembunyikan karena sudah diganti dengan st.markdown di atas
+        placeholder="Klik dan ketik untuk mencari indikator..."
     )
     
     # --- MENCEGAH BACKSPACE MENGHAPUS INDIKATOR ---
