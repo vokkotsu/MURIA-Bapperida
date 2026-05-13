@@ -1,0 +1,2 @@
+venv/ env/ .venv/ ENV/
+pycache/ *.py[cod] *$py.class *.so
