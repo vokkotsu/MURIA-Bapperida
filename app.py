@@ -1,6 +1,14 @@
 # app.py
 import streamlit as st
+import logging
+import warnings
 from utils.state_manager import init_session_state
+
+# MEMBUNGKAM LOG & WARNING
+# 1. Membungkam peringatan (warning) bawaan Python
+warnings.filterwarnings("ignore")
+# 2. Membungkam log kuning/merah dari Streamlit di Terminal (hanya tampilkan Error fatal)
+logging.getLogger("streamlit").setLevel(logging.ERROR)
 
 # --- IMPORT SEMUA VIEW ---
 from views.home import render_home
@@ -80,7 +88,7 @@ with st.sidebar:
     
     st.markdown("---")
     
-    # --- FITUR PROJECT KEY (RUANG KERJA) ---
+    # --- PROJECT KEY (RUANG KERJA) ---
     with st.expander("⚙️ Pengaturan Ruang Kerja Lanjutan", expanded=False):
         pj_key = st.text_input(
             "🔑 Kunci Proyek:", 
@@ -118,7 +126,7 @@ elif selected_menu == menu_list[3]:
 elif selected_menu == menu_list[4]:
     render_panduan() 
 
-# FITUR BARU: GLOBAL FOOTER & WATERMARK
+# GLOBAL FOOTER & WATERMARK
 st.markdown("""
     <div style="margin-top: 5rem; padding-top: 2rem; border-top: 1px solid #e6e6e6; text-align: center; color: #888;">
         <p style="margin-bottom: 0px; font-size: 0.9rem;">

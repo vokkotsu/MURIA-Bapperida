@@ -16,7 +16,7 @@ def render_tab2():
     st.subheader("🏆 Peringkat Akumulasi Prioritas Kecamatan")
     st.markdown("Skor ini dihitung **berdasarkan Kolom Acuan (yang bertombol merah)** pada masing-masing tabel di Tab 1.")
     
-    # --- FITUR BARU: Menyaring Hanya Tabel yang Aktif ---
+    # --- Menyaring Hanya Tabel yang Aktif ---
     tabel_aktif = [t for t in st.session_state.koleksi_tabel if t.get('is_active', True)]
     
     if not tabel_aktif:

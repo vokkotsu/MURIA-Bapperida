@@ -50,9 +50,7 @@ def render_panduan():
     elif st.session_state.panduan_page == 'info':
         baca_file_markdown("INFO.md")
 
-# ==========================================
 # FUNGSI PEMBACA MARKDOWN (Pemisahan Konten)
-# ==========================================
 def baca_file_markdown(nama_file):
     """Fungsi universal untuk merender teks dari file Markdown."""
     tombol_kembali()
@@ -85,9 +83,7 @@ def tampilkan_faq_native():
     with st.expander("4. Apakah saya butuh internet untuk membuka file Peta Interaktif (.html) yang diunduh?"):
         st.write("Anda tetap memerlukan koneksi internet yang sangat kecil hanya untuk memuat 'gambar peta dasar' (peta jalannya). Namun data batas wilayah, warna zonasi, dan rincian angkanya sudah tersimpan permanen secara luring (*offline*) di dalam file HTML tersebut.")
 
-# ==========================================
 # KOMPONEN UI UTAMA (MENU GRID)
-# ==========================================
 def tombol_kembali():
     st.button(
         "⬅️ Kembali ke Menu Utama Panduan", 

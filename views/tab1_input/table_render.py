@@ -16,7 +16,7 @@ def render_tables():
         # Mengambil daftar semua judul tabel yang ada di memori
         daftar_judul = [t['judul'] for t in st.session_state.koleksi_tabel]
         
-        # --- FITUR: SMART SEARCH AUTOCOMPLETE (INSTAN) ---
+        # --- SMART SEARCH AUTOCOMPLETE (INSTAN) ---
         search_query = st.multiselect(
             "🔍 Cari & Filter Tabel Indikator:", 
             options=daftar_judul,

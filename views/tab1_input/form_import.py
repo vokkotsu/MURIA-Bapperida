@@ -63,7 +63,7 @@ def render_step_4():
             st.markdown("<hr style='margin: 15px 0'>", unsafe_allow_html=True)
             st.markdown("#### ⚙️ Pengaturan Pemisahan Tabel")
 
-            # --- FITUR BARU: MENGAMBIL TAHUN DARI NAMA FILE ---
+            # --- MENGAMBIL TAHUN DARI NAMA FILE ---
             file_name_clean = uploaded_file.name.rsplit('.', 1)[0]
             # Algoritma Regex untuk mencari 4 angka berurutan yang merupakan tahun (diawali 19 atau 20)
             match_tahun = re.search(r'\b(19|20)\d{2}\b', file_name_clean)

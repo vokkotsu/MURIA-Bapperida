@@ -137,9 +137,7 @@ def buat_peta(df_hasil, fitur_terpilih):
         st.warning("⚠️ File batas kecamatan (Kecamatan_Kudus.json) tidak ditemukan di folder 'data/'. Pastikan nama file sudah benar.")
 
 
-    # ==========================================
     # TEKS LABEL NAMA KECAMATAN PERMANEN
-    # ==========================================
     # Pin marker icon dihapus. Hanya menyisakan teks agar peta bersih.
     for idx, row in df_hasil.iterrows():
         kec = row['Kecamatan']

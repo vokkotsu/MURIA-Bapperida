@@ -65,7 +65,7 @@ def render_tabel_zonasi(fitur_terpilih):
     if 'hasil_kmeans' in st.session_state:
         df_asli = st.session_state.hasil_kmeans
         
-        # --- FITUR BARU: TOGGLE RASIO TERBALIK ---
+        # --- TOGGLE RASIO TERBALIK ---
         col_tg, _ = st.columns([2, 1])
         with col_tg:
             mode_terbalik = st.toggle(

@@ -70,6 +70,12 @@ def render_data_view(i, tabel, kolom_tampil):
             column_config=col_config
         )
         
+        # --- ANTI-CRASH (MENGUBAH NULL/KOSONG MENJADI 0) ---
+        for col in edit_cols:
+            if col != "Kecamatan" and col in edited_df.columns:
+                # Memaksa data dikonversi ke numerik. Jika kosong/error, otomatis diubah menjadi 0.0
+                edited_df[col] = pd.to_numeric(edited_df[col], errors='coerce').fillna(0.0)
+        
         # Menyimpan jika ada sel yang diketik/diedit pengguna
         df_kembali_standar = edited_df[edit_cols].set_index('Kecamatan').reindex(DAFTAR_KECAMATAN).reset_index()
         data_baru = df_kembali_standar.to_dict(orient='list')

@@ -14,7 +14,7 @@ def render_home():
         st.info("👋 Selamat Datang! Saat ini belum ada data indikator yang dimasukkan. Silakan menuju menu **Input Data Indikator** untuk memulai.")
         return
 
-    # --- FITUR BARU: Menyaring Hanya Tabel yang Aktif ---
+    # --- Menyaring Hanya Tabel yang Aktif ---
     tabel_aktif = [t for t in st.session_state.koleksi_tabel if t.get('is_active', True)]
     
     if not tabel_aktif:
