@@ -27,3 +27,4 @@ dist/
 
 *.json
 !data/Kecamatan_Kudus.json
+profil_dasar.json
