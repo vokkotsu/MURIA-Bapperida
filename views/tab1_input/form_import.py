@@ -30,12 +30,14 @@ def render_step_4():
             else:
                 df = pd.read_excel(uploaded_file, header=header_idx)
 
+            # ==========================================
             # PEMBERSIH DATA ANTI-CRASH (NaN CLEANER)
-            # A. Hapus baris & kolom yang 100% kosong melompong (Ghost Rows)
+            # ==========================================
+            # Hapus baris & kolom yang 100% kosong melompong
             df = df.dropna(how='all')
             df = df.dropna(axis=1, how='all')
             
-            # B. Paksa semua nama kolom menjadi string untuk menghindari error Float Iterable
+            # Paksa semua nama kolom menjadi string untuk menghindari error
             df.columns = [str(c).strip() for c in df.columns]
 
             # Pratinjau Tabel Mentah
@@ -50,22 +52,17 @@ def render_step_4():
             col_k1, col_k2 = st.columns(2)
             kolom_kecamatan = col_k1.selectbox("Pilih Kolom 'Kecamatan':", df.columns, index=kec_idx)
 
-            # Memfilter kolom numerik saja (mengabaikan teks)
-            numeric_cols = []
-            for col in df.columns:
-                if col != kolom_kecamatan and pd.api.types.is_numeric_dtype(df[col]):
-                    numeric_cols.append(col)
-
-            # Jika pandas gagal mendeteksi numerik (biasanya karena format koma string), tampilkan semua
-            if not numeric_cols:
-                for col in df.columns:
-                    if col != kolom_kecamatan:
-                        numeric_cols.append(col)
+            # ==========================================
+            # PERBAIKAN: MENAMPILKAN SEMUA KOLOM (MENGABAIKAN FILTER NUMERIK)
+            # ==========================================
+            # Kita tidak lagi menyaring kolom berdasarkan tipe numerik karena 
+            # data BPS sering menggunakan tanda "-" yang terbaca sebagai teks.
+            kolom_tersedia = [col for col in df.columns if col != kolom_kecamatan]
 
             kolom_terpilih = st.multiselect(
                 "Pilih Kolom Indikator yang Ingin Diambil:",
-                numeric_cols,
-                default=numeric_cols
+                kolom_tersedia,
+                default=kolom_tersedia
             )
 
             st.markdown("<hr style='margin: 15px 0'>", unsafe_allow_html=True)
@@ -73,11 +70,10 @@ def render_step_4():
 
             # --- MENGAMBIL TAHUN DARI NAMA FILE ---
             file_name_clean = uploaded_file.name.rsplit('.', 1)[0]
-            # Algoritma Regex untuk mencari 4 angka berurutan yang merupakan tahun (diawali 19 atau 20)
             match_tahun = re.search(r'\b(19|20)\d{2}\b', file_name_clean)
             tahun_file = match_tahun.group(0) if match_tahun else ""
 
-            # --- MODE PEMISAHAN TERBARU ---
+            # --- MODE PEMISAHAN ---
             mode_simpan = st.radio(
                 "Pilih Metode Penyimpanan untuk kolom-kolom di atas:",
                 [
@@ -92,7 +88,6 @@ def render_step_4():
             kustom_configs = []
             if "Kustom" in mode_simpan:
                 with st.container(border=True):
-                    # Max table disesuaikan dengan jumlah kolom terpilih agar logis
                     max_tbl = len(kolom_terpilih) if len(kolom_terpilih) > 1 else 2
                     jml_tabel = st.number_input("1. Ingin membagi menjadi berapa tabel?", min_value=2, max_value=max_tbl, value=2)
                     
@@ -107,7 +102,6 @@ def render_step_4():
                         nama_tabel = st.text_input(f"Nama Tabel {i+1} (Contoh: Kesehatan / Pendidikan):", key=f"cust_nama_{i}")
                         
                         kolom_dipilih = []
-                        # Menampilkan checkbox grid yang rapi
                         cols = st.columns(3)
                         for j, col in enumerate(kolom_terpilih):
                             with cols[j % 3]:
@@ -120,12 +114,10 @@ def render_step_4():
             col_btn, _ = st.columns([2, 3])
             
             if col_btn.button("💾 Ekstrak & Simpan Data", type="primary", use_container_width=True):
-                # Validasi Dasar
                 if not kolom_terpilih:
                     st.error("⚠️ Pilih minimal 1 kolom indikator!")
                     return
                 
-                # Validasi Khusus Mode Kustom
                 if "Kustom" in mode_simpan:
                     for c in kustom_configs:
                         if not c["nama"].strip():
@@ -135,48 +127,42 @@ def render_step_4():
                             st.error(f"⚠️ Tabel '{c['nama']}' belum memiliki data! Silakan centang minimal 1 kolom indikator.")
                             return
 
-                # --- PEMBERSIHAN BARIS KOSONG (SEBELUM DIEKSTRAK) ---
-                # C. Pastikan membuang baris yang nilai kecamatannya kosong/NaN
+                # Pastikan membuang baris yang nilai kecamatannya kosong/NaN
                 df_bersih = df.dropna(subset=[kolom_kecamatan])
 
-                # Membersihkan dan memetakan data dengan DAFTAR_KECAMATAN agar urutannya absolut
                 cleaned_data = []
                 import_kec_list = df_bersih[kolom_kecamatan].astype(str).str.lower().str.strip().tolist()
 
                 for kec in DAFTAR_KECAMATAN:
                     row_data = {"Kecamatan": kec}
                     try:
-                        # Mencari index kecamatan pada data yang diimpor
                         kec_lower = kec.lower()
-                        # D. PENGAMANAN EKSTRA: Pastikan 'v' selalu dibaca sebagai string (str(v)) agar kebal dari float
+                        # Pencarian index yang aman terhadap Float/NaN
                         idx = next(i for i, v in enumerate(import_kec_list) if kec_lower in str(v))
 
                         for col in kolom_terpilih:
                             raw_val = df_bersih.iloc[idx][col]
-                            # --- PERBAIKAN: Konversi Cerdas ke Integer (Bilangan Bulat) ---
+                            # --- PERBAIKAN CERDAS: Mengubah tanda "-" menjadi 0 ---
                             try:
-                                if pd.isna(raw_val) or str(raw_val).strip() in ['-', '', 'NaN', 'null']:
+                                if pd.isna(raw_val) or str(raw_val).strip() in ['-', '', 'NaN', 'null', 'None']:
                                     val = 0
                                 else:
-                                    # Hapus koma pemisah ribuan, jadikan float dulu (untuk antisipasi desimal), lalu bulatkan ke integer
-                                    val = int(round(float(str(raw_val).replace(',', ''))))
+                                    # Hapus koma pemisah ribuan, jadikan float dulu, lalu bulatkan ke integer
+                                    val = int(round(float(str(raw_val).replace(',', '').replace(' ', ''))))
                             except:
                                 val = 0
                             row_data[col] = val
                             
                     except StopIteration:
-                        # Jika kecamatan (misal: "Kota Kudus") tidak ada di file, beri nilai 0
                         for col in kolom_terpilih:
                             row_data[col] = 0
 
                     cleaned_data.append(row_data)
 
 
-                # --- LOGIKA PENYIMPANAN BERDASARKAN MODE YANG DIPILIH ---
+                # --- LOGIKA PENYIMPANAN ---
                 if "Gabungkan" in mode_simpan:
-                    # Mode 1: 1 Tabel berisi banyak kolom
                     if len(kolom_terpilih) == 1:
-                        # --- PERBAIKAN: Jika hanya 1 kolom, jadikan "Jumlah" ---
                         col_name = kolom_terpilih[0]
                         for row in cleaned_data:
                             row["Jumlah"] = row.pop(col_name)
@@ -206,10 +192,8 @@ def render_step_4():
                     st.session_state.koleksi_tabel.append(tabel_baru)
                     
                 elif "Otomatis" in mode_simpan:
-                    # Mode 2: Memecah Data Menjadi Banyak Tabel secara individual
                     for col in kolom_terpilih:
                         single_col_data = []
-                        # --- PERBAIKAN: Kolom otomatis dinamakan "Jumlah" ---
                         for row in cleaned_data:
                             single_col_data.append({
                                 "Kecamatan": row["Kecamatan"],
@@ -230,14 +214,11 @@ def render_step_4():
                         st.session_state.koleksi_tabel.append(tabel_baru)
                         
                 elif "Kustom" in mode_simpan:
-                    # Mode 3: Memecah berdasarkan rancangan checkbox user
                     for conf in kustom_configs:
                         nama_final = f"{conf['nama'].strip()} {tahun_file}".strip()
                         kolom_custom_terpilih = conf["kolom"]
                         
                         custom_data = []
-                        
-                        # --- PERBAIKAN: Jika tabel kustom hanya 1 kolom, jadikan "Jumlah" ---
                         if len(kolom_custom_terpilih) == 1:
                             col_name = kolom_custom_terpilih[0]
                             for row in cleaned_data:
