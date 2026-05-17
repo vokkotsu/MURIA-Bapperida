@@ -30,6 +30,14 @@ def render_step_4():
             else:
                 df = pd.read_excel(uploaded_file, header=header_idx)
 
+            # PEMBERSIH DATA ANTI-CRASH (NaN CLEANER)
+            # A. Hapus baris & kolom yang 100% kosong melompong (Ghost Rows)
+            df = df.dropna(how='all')
+            df = df.dropna(axis=1, how='all')
+            
+            # B. Paksa semua nama kolom menjadi string untuk menghindari error Float Iterable
+            df.columns = [str(c).strip() for c in df.columns]
+
             # Pratinjau Tabel Mentah
             with st.expander("👀 Pratinjau File Mentah", expanded=False):
                 st.dataframe(df.head(5).astype(str))
@@ -127,19 +135,24 @@ def render_step_4():
                             st.error(f"⚠️ Tabel '{c['nama']}' belum memiliki data! Silakan centang minimal 1 kolom indikator.")
                             return
 
+                # --- PEMBERSIHAN BARIS KOSONG (SEBELUM DIEKSTRAK) ---
+                # C. Pastikan membuang baris yang nilai kecamatannya kosong/NaN
+                df_bersih = df.dropna(subset=[kolom_kecamatan])
+
                 # Membersihkan dan memetakan data dengan DAFTAR_KECAMATAN agar urutannya absolut
                 cleaned_data = []
-                import_kec_list = df[kolom_kecamatan].astype(str).str.lower().str.strip().tolist()
+                import_kec_list = df_bersih[kolom_kecamatan].astype(str).str.lower().str.strip().tolist()
 
                 for kec in DAFTAR_KECAMATAN:
                     row_data = {"Kecamatan": kec}
                     try:
                         # Mencari index kecamatan pada data yang diimpor
                         kec_lower = kec.lower()
-                        idx = next(i for i, v in enumerate(import_kec_list) if kec_lower in v)
+                        # D. PENGAMANAN EKSTRA: Pastikan 'v' selalu dibaca sebagai string (str(v)) agar kebal dari float
+                        idx = next(i for i, v in enumerate(import_kec_list) if kec_lower in str(v))
 
                         for col in kolom_terpilih:
-                            raw_val = df.iloc[idx][col]
+                            raw_val = df_bersih.iloc[idx][col]
                             # --- PERBAIKAN: Konversi Cerdas ke Integer (Bilangan Bulat) ---
                             try:
                                 if pd.isna(raw_val) or str(raw_val).strip() in ['-', '', 'NaN', 'null']:
