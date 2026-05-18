@@ -55,7 +55,7 @@ def buat_peta(df_hasil, fitur_terpilih):
                 
             df_dict = df_hasil.set_index('Kecamatan').to_dict(orient='index')
                 
-            # --- INJEKSI DATA SPASIAL DAN FITUR AI KE DALAM POLIGON ---
+            # INJEKSI DATA SPASIAL DAN FITUR AI KE DALAM POLIGON
             for feature in geojson_batas.get('features', []):
                 poly_lat, poly_lon = hitung_pusat_poligon(feature['geometry'])
                 
@@ -80,7 +80,7 @@ def buat_peta(df_hasil, fitur_terpilih):
                     feature['properties']['Status_Zona'] = row_data.get('Status Zona', 'Tidak Diketahui')
                     feature['properties']['Klaster_ID'] = row_data.get('Klaster_ID', -1)
                     
-                    # --- MENYUNTIKKAN FOKUS PERBAIKAN KE HOVER PETA ---
+                    # MENYUNTIKKAN FOKUS PERBAIKAN KE HOVER PETA
                     fokus = row_data.get('Fokus_Perbaikan', '-')
                     feature['properties']['Fokus_Utama'] = fokus if fokus != "-" else "✅ Sudah Aman"
                     
@@ -95,7 +95,7 @@ def buat_peta(df_hasil, fitur_terpilih):
             fields_popup = ['KECAMATAN', 'Status_Zona', 'Fokus_Utama'] + list(fitur_terpilih)
             aliases_popup = ['Kecamatan:', 'Status Zona:', 'Saran Perbaikan:'] + [f"{f}:" for f in fitur_terpilih]
 
-            # --- MENGGAMBAR POLIGON INTERAKTIF ---
+            # MENGGAMBAR POLIGON INTERAKTIF
             folium.GeoJson(
                 geojson_batas,
                 name='Zonasi Prioritas',
@@ -112,7 +112,7 @@ def buat_peta(df_hasil, fitur_terpilih):
                     'fillOpacity': 0.8
                 },
                 
-                # --- PERBAIKAN TOOLTIP (HOVER): MENAMBAHKAN FOKUS UTAMA ---
+                # PERBAIKAN TOOLTIP (HOVER): MENAMBAHKAN FOKUS UTAMA
                 tooltip=folium.GeoJsonTooltip(
                     fields=['KECAMATAN', 'Status_Zona', 'Fokus_Utama'],
                     aliases=['Kecamatan:', 'Zona:', 'Prioritas Perbaikan:'],

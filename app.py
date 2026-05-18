@@ -10,17 +10,17 @@ warnings.filterwarnings("ignore")
 # 2. Membungkam log kuning/merah dari Streamlit di Terminal (hanya tampilkan Error fatal)
 logging.getLogger("streamlit").setLevel(logging.ERROR)
 
-# --- IMPORT SEMUA VIEW ---
+# IMPORT SEMUA VIEW
 from views.home import render_home
 from views.tab1_input import render_tab1
 from views.tab2_scoring import render_tab2
 from views.tab3_kmeans import render_tab3
 from views.panduan import render_panduan
 
-# --- PENGATURAN HALAMAN ---
+# PENGATURAN HALAMAN
 st.set_page_config(page_title="MURIA Bapperida", page_icon="🏔️", layout="wide", initial_sidebar_state="expanded")
 
-# --- INJEKSI CSS KUSTOM (MENGECILKAN SIDEBAR) ---
+# INJEKSI CSS KUSTOM (MENGECILKAN SIDEBAR)
 st.markdown("""
     <style>
         /* Mengecilkan lebar sidebar HANYA saat posisinya terbuka (expanded) */
@@ -36,10 +36,10 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- INISIALISASI MEMORI ---
+# INISIALISASI MEMORI
 init_session_state()
 
-# --- SIDEBAR NAVIGASI BAWAAN (STABIL) ---
+# SIDEBAR NAVIGASI BAWAAN
 with st.sidebar:
     st.title("🏔️ MURIA Bapperida")
     st.markdown("Pilih menu di bawah ini untuk berpindah halaman.")
@@ -88,7 +88,7 @@ with st.sidebar:
     
     st.markdown("---")
     
-    # --- PROJECT KEY (RUANG KERJA) ---
+    # PROJECT KEY (RUANG KERJA)
     with st.expander("⚙️ Pengaturan Ruang Kerja Lanjutan", expanded=False):
         pj_key = st.text_input(
             "🔑 Kunci Proyek:", 
@@ -109,12 +109,12 @@ with st.sidebar:
 
 selected_menu = st.session_state.active_menu_selector
 
-# --- HEADER APLIKASI (KONTEN UTAMA) ---
+# HEADER APLIKASI (KONTEN UTAMA)
 st.title("📊 MURIA: Multidimensional Regional Intelligent Analytics")
 st.markdown("Aplikasi ini menggabungkan metode *Scoring* tradisional dengan *Machine Learning* (K-Means) untuk menentukan prioritas wilayah secara cerdas.")
 st.markdown("---")
 
-# --- ROUTING HALAMAN APLIKASI ---
+# ROUTING HALAMAN APLIKASI
 if selected_menu == menu_list[0]:
     render_home()
 elif selected_menu == menu_list[1]:

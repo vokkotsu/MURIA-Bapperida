@@ -42,7 +42,7 @@ def render_backup_ui():
     with st.expander("💾 Simpan / Muat Proyek", expanded=False):
         st.info("💡 Gunakan fitur ini untuk mengamankan data secara lokal, atau Sinkronisasikan ke Cloud (GitHub Gist).")
         
-        # --- PERBAIKAN: Menampilkan pesan sukses yang dititipkan di memori sebelum rerun ---
+        # Menampilkan pesan sukses yang dititipkan di memori sebelum rerun
         if st.session_state.get('pesan_sukses_backup'):
             st.success(st.session_state.pesan_sukses_backup)
             # Menghapus pesan dari memori setelah ditampilkan agar tidak muncul terus-menerus
@@ -57,14 +57,14 @@ def render_backup_ui():
         current_key = st.session_state.get('project_key', 'publik')
         nama_file_unduh = f"Backup_{current_key.capitalize()}.json"
         
-        # --- TAB MANAJEMEN DATA ---
+        # TAB MANAJEMEN DATA
         # Menukar posisi: Cloud Backup menjadi tab pertama, Penyimpanan Lokal menjadi tab kedua
         tab_cloud, tab_lokal = st.tabs(["☁️ Cloud Backup (1-Click Sync)", "💻 Penyimpanan Lokal"])
         
         with tab_cloud:
             st.markdown("**Sinkronisasi Data Permanen (Cloud Database)**")
             
-            # --- MENGAMBIL TOKEN & GIST ID DARI SECRETS (TERSEMBUNYI DARI UI) ---
+            # MENGAMBIL TOKEN & GIST ID DARI SECRETS (TERSEMBUNYI DARI UI)
             gh_token = ""
             gh_gist = ""
             try:

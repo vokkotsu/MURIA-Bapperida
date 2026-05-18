@@ -2,12 +2,12 @@
 import streamlit as st
 import os
 
-# --- CALLBACK UNTUK NAVIGASI ANTI-GAGAL ---
+# CALLBACK UNTUK NAVIGASI ANTI-GAGAL
 def set_panduan_page(halaman_tujuan):
     """Fungsi callback yang dieksekusi sebelum halaman di-rerun."""
     st.session_state.panduan_page = halaman_tujuan
     
-    # --- SINKRONISASI KE BROWSER URL ---
+    # SINKRONISASI KE BROWSER URL
     try:
         if halaman_tujuan == 'menu':
             if 'subpage' in st.query_params:
@@ -24,7 +24,7 @@ def render_panduan():
     # Menghapus padding/margin berlebih di bagian atas
     st.markdown("<style> .block-container { padding-top: 2rem; } </style>", unsafe_allow_html=True)
     
-    # --- MEMBACA URL BROWSER SAAT HALAMAN DIMUAT ---
+    # MEMBACA URL BROWSER SAAT HALAMAN DIMUAT
     try:
         page_dari_url = st.query_params.get("subpage")
     except AttributeError:
@@ -38,7 +38,7 @@ def render_panduan():
     else:
         st.session_state.panduan_page = 'menu'
         
-    # --- ROUTING SUB-HALAMAN ---
+    # ROUTING SUB-HALAMAN
     if st.session_state.panduan_page == 'menu':
         tampilkan_menu_utama()
     elif st.session_state.panduan_page == 'cara_penggunaan':

@@ -30,9 +30,7 @@ def render_step_4():
             else:
                 df = pd.read_excel(uploaded_file, header=header_idx)
 
-            # ==========================================
             # PEMBERSIH DATA ANTI-CRASH (NaN CLEANER)
-            # ==========================================
             # Hapus baris & kolom yang 100% kosong melompong
             df = df.dropna(how='all')
             df = df.dropna(axis=1, how='all')
@@ -52,11 +50,7 @@ def render_step_4():
             col_k1, col_k2 = st.columns(2)
             kolom_kecamatan = col_k1.selectbox("Pilih Kolom 'Kecamatan':", df.columns, index=kec_idx)
 
-            # ==========================================
-            # PERBAIKAN: MENAMPILKAN SEMUA KOLOM (MENGABAIKAN FILTER NUMERIK)
-            # ==========================================
-            # Kita tidak lagi menyaring kolom berdasarkan tipe numerik karena 
-            # data BPS sering menggunakan tanda "-" yang terbaca sebagai teks.
+            # MENAMPILKAN SEMUA KOLOM (MENGABAIKAN FILTER NUMERIK)
             kolom_tersedia = [col for col in df.columns if col != kolom_kecamatan]
 
             kolom_terpilih = st.multiselect(
@@ -68,12 +62,12 @@ def render_step_4():
             st.markdown("<hr style='margin: 15px 0'>", unsafe_allow_html=True)
             st.markdown("#### ⚙️ Pengaturan Pemisahan Tabel")
 
-            # --- MENGAMBIL TAHUN DARI NAMA FILE ---
+            # MENGAMBIL TAHUN DARI NAMA FILE
             file_name_clean = uploaded_file.name.rsplit('.', 1)[0]
             match_tahun = re.search(r'\b(19|20)\d{2}\b', file_name_clean)
             tahun_file = match_tahun.group(0) if match_tahun else ""
 
-            # --- MODE PEMISAHAN ---
+            # MODE PEMISAHAN
             mode_simpan = st.radio(
                 "Pilih Metode Penyimpanan untuk kolom-kolom di atas:",
                 [
@@ -84,7 +78,7 @@ def render_step_4():
                 help="Gunakan 'Pemisahan Kustom' untuk mengelompokkan beberapa kolom tertentu ke tabel spesifik menggunakan Checkbox."
             )
 
-            # --- UI PEMISAHAN KUSTOM ---
+            # UI PEMISAHAN KUSTOM
             kustom_configs = []
             if "Kustom" in mode_simpan:
                 with st.container(border=True):
@@ -142,7 +136,7 @@ def render_step_4():
 
                         for col in kolom_terpilih:
                             raw_val = df_bersih.iloc[idx][col]
-                            # --- PERBAIKAN CERDAS: Mengubah tanda "-" menjadi 0 ---
+                            # PERBAIKAN CERDAS: Mengubah tanda "-" menjadi 0
                             try:
                                 if pd.isna(raw_val) or str(raw_val).strip() in ['-', '', 'NaN', 'null', 'None']:
                                     val = 0
@@ -160,7 +154,7 @@ def render_step_4():
                     cleaned_data.append(row_data)
 
 
-                # --- LOGIKA PENYIMPANAN ---
+                # LOGIKA PENYIMPANAN
                 if "Gabungkan" in mode_simpan:
                     if len(kolom_terpilih) == 1:
                         col_name = kolom_terpilih[0]

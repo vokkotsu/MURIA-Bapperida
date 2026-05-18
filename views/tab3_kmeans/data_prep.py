@@ -12,7 +12,7 @@ def siapkan_data_koleksi(koleksi_tabel, data_dasar=None):
     map_penduduk = {}
     map_luas = {}
     if data_dasar is not None:
-        # --- PERBAIKAN AI K-MEANS: MENGGUNAKAN TAHUN POPULASI AKTIF PILIHAN PENGGUNA ---
+        # MENGGUNAKAN TAHUN POPULASI AKTIF PILIHAN PENGGUNA
         penduduk_cols = sorted([col for col in data_dasar.columns if str(col).startswith("Jumlah Penduduk")])
         
         # Mengecek memori tahun_penduduk_aktif

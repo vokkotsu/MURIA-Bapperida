@@ -14,7 +14,7 @@ def render_home():
         st.info("👋 Selamat Datang! Saat ini belum ada data indikator yang dimasukkan. Silakan menuju menu **Input Data Indikator** untuk memulai.")
         return
 
-    # --- Menyaring Hanya Tabel yang Aktif ---
+    # Menyaring Hanya Tabel yang Aktif
     tabel_aktif = [t for t in st.session_state.koleksi_tabel if t.get('is_active', True)]
     
     if not tabel_aktif:
@@ -62,7 +62,7 @@ def render_home():
         nama_zona_terparah = zona_terparah.iloc[0]['Status Zona']
         status_ai = f"{jumlah_terparah} Kec. di {nama_zona_terparah}"
 
-    # --- MENAMPILKAN KARTU METRIK ---
+    # MENAMPILKAN KARTU METRIK
     col1, col2, col3 = st.columns(3)
     with col1:
         with st.container(border=True):
@@ -77,7 +77,7 @@ def render_home():
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # --- MENAMPILKAN GRAFIK RINGKASAN ---
+    # MENAMPILKAN GRAFIK RINGKASAN
     col_chart1, col_chart2 = st.columns([2, 1])
     with col_chart1:
         st.markdown("#### 📈 Peringkat Akumulasi Tertinggi (Top 5)")

@@ -10,7 +10,7 @@ def render_mid_controls(i, tabel, kolom_tampil):
     kolom_numerik = tabel['kolom_numerik']
     kolom_mati = tabel.get('kolom_mati', [])
     
-    # --- BARIS PERTAMA PENGATURAN ---
+    # BARIS PERTAMA PENGATURAN
     row1_col1, row1_col2 = st.columns(2)
     
     with row1_col1:
@@ -47,7 +47,7 @@ def render_mid_controls(i, tabel, kolom_tampil):
                 st.session_state.pop('hasil_kmeans', None)
                 st.rerun()
 
-    # --- BARIS KEDUA PENGATURAN ---
+    # BARIS KEDUA PENGATURAN
     row2_col1, row2_col2 = st.columns(2)
     
     with row2_col1:

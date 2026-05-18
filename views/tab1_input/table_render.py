@@ -16,7 +16,7 @@ def render_tables():
         # Mengambil daftar semua judul tabel yang ada di memori
         daftar_judul = [t['judul'] for t in st.session_state.koleksi_tabel]
         
-        # --- SMART SEARCH AUTOCOMPLETE (INSTAN) ---
+        # SMART SEARCH AUTOCOMPLETE (INSTAN)
         search_query = st.multiselect(
             "🔍 Cari & Filter Tabel Indikator:", 
             options=daftar_judul,
@@ -24,7 +24,7 @@ def render_tables():
             help="Tampilan akan langsung berubah seketika tanpa perlu menekan Enter. Anda juga bisa memilih beberapa tabel sekaligus."
         )
         
-        # --- MENCEGAH BACKSPACE MENGHAPUS PILIHAN DI SEARCH BOX ---
+        # MENCEGAH BACKSPACE MENGHAPUS PILIHAN DI SEARCH BOX
         components.html(
             """
             <script>
@@ -56,7 +56,7 @@ def render_tables():
         
         st.caption("💡 Tip: Gunakan menu di bawah judul tabel untuk mengelola data dengan rapi.")
         
-        # --- LOOPING & FILTERING TABEL ---
+        # LOOPING & FILTERING TABEL
         for i, tabel in enumerate(st.session_state.koleksi_tabel):
             # Logika penyaringan instan: Tampilkan hanya tabel yang dipilih user
             if search_query and tabel['judul'] not in search_query:

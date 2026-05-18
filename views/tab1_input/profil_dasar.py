@@ -22,7 +22,7 @@ def render_profil_dasar():
         st.session_state.data_dasar.rename(columns={"Jumlah Penduduk (Jiwa)": "Jumlah Penduduk 2026"}, inplace=True)
         simpan_profil_dasar(st.session_state.data_dasar, st.session_state.sumber_profil)
 
-    # --- UI TERBAGI MENJADI 2 TAB ---
+    # UI TERBAGI MENJADI 2 TAB
     tabs_list = ["🟢 Profil Aktif", "📁 Import File Custom (.xlsx / .csv)"]
     
     try:

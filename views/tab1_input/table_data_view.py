@@ -42,7 +42,7 @@ def render_data_view(i, tabel, kolom_tampil):
     render_cols = ["Kecamatan"] + kolom_tampil
     df_view = df[render_cols].sort_values(by=active_col, ascending=not tabel['panah_bawah']).reset_index(drop=True)
     
-    # --- RENDER TABEL (HIDUP vs MATI) ---
+    # RENDER TABEL (HIDUP vs MATI)
     if is_active:
         df_berwarna = beri_warna_tabel(df_view, tabel['warna'], tabel['panah_bawah'], target_col=active_col)
         
@@ -70,7 +70,7 @@ def render_data_view(i, tabel, kolom_tampil):
             column_config=col_config
         )
         
-        # --- ANTI-CRASH (MENGUBAH NULL/KOSONG MENJADI 0) ---
+        # ANTI-CRASH (MENGUBAH NULL/KOSONG MENJADI 0)
         for col in edit_cols:
             if col != "Kecamatan" and col in edited_df.columns:
                 # Memaksa data dikonversi ke numerik. Jika kosong/error, otomatis diubah menjadi 0.0

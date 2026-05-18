@@ -37,7 +37,7 @@ def render_peta_zonasi(fitur_terpilih):
         
         st.markdown("#### 🗺️ Peta Prioritas Wilayah")
         
-        # --- PERBAIKAN ERROR HASHING ---
+        # PERBAIKAN ERROR HASHING
         df_hasil_map = df_hasil.copy()
         if 'Koordinat' in df_hasil_map.columns:
             df_hasil_map['Koordinat'] = df_hasil_map['Koordinat'].apply(lambda x: tuple(x) if isinstance(x, list) else x)
@@ -46,7 +46,7 @@ def render_peta_zonasi(fitur_terpilih):
         
         st.write("")
         
-        # --- PERBAIKAN FLICKERING: Menambahkan returned_objects=[] ---
+        # PERBAIKAN FLICKERING: Menambahkan returned_objects=[]
         st_folium(peta_kudus, width=700, height=450, returned_objects=[])
         
         map_html = peta_kudus.get_root().render()
@@ -65,7 +65,7 @@ def render_tabel_zonasi(fitur_terpilih):
     if 'hasil_kmeans' in st.session_state:
         df_asli = st.session_state.hasil_kmeans
         
-        # --- TOGGLE RASIO TERBALIK ---
+        # TOGGLE RASIO TERBALIK
         col_tg, _ = st.columns([2, 1])
         with col_tg:
             mode_terbalik = st.toggle(
@@ -104,10 +104,10 @@ def render_tabel_zonasi(fitur_terpilih):
             config_kolom_tab3[fitur] = st.column_config.Column(
                 label=fitur_singkat + label_tambahan,
                 help=f"Indikator Asli: {fitur}",
-                width=240 # --- PERBAIKAN: Menggunakan ukuran fix 240 pixel agar sangat proporsional ---
+                width=240 # PERBAIKAN: Menggunakan ukuran fix 240 pixel agar sangat proporsional
             )
         
-        # --- PERBAIKAN FORMAT ANGKA: Menerapkan fungsi format_angka_indo ---
+        # PERBAIKAN FORMAT ANGKA: Menerapkan fungsi format_angka_indo
         formatter_dict = {fitur: format_angka_indo for fitur in fitur_terpilih}
         
         st.dataframe(

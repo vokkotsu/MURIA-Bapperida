@@ -47,7 +47,7 @@ def proses_kmeans(df_untuk_ai, df_master, fitur_terpilih, n_clusters, bobot_baru
         df_master['Status Zona'] = df_master['Klaster_ID'].map(label_klaster)
         df_master['Koordinat'] = df_master['Kecamatan'].map(KECAMATAN_KUDUS_MAP)
         
-        # FITUR BARU: GAP ANALYSIS (FOKUS PERBAIKAN TERPARAH)
+        # GAP ANALYSIS (FOKUS PERBAIKAN TERPARAH)
         indikator_prioritas = ["-"] * len(df_master)
         
         # Mencari indeks kecamatan yang berhasil masuk ke Zona 1 (Aman)

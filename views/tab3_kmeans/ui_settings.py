@@ -10,7 +10,7 @@ def render_pengaturan_ai(df_untuk_ai, df_master, fitur_tersedia):
     
     config_ai = muat_config_kmeans()
     
-    # --- DEFAULT MULTISELECT HANYA KOLOM ACUAN ---
+    # DEFAULT MULTISELECT HANYA KOLOM ACUAN
     default_acuan_features = []
     if 'koleksi_tabel' in st.session_state:
         for tabel in st.session_state.koleksi_tabel:
@@ -57,7 +57,7 @@ def render_pengaturan_ai(df_untuk_ai, df_master, fitur_tersedia):
         if 'hasil_kmeans' in st.session_state:
             del st.session_state['hasil_kmeans']
 
-    # --- KOTAK PEMILIHAN (MULTISELECT) ---
+    # KOTAK PEMILIHAN (MULTISELECT)
     fitur_terpilih = st.multiselect(
         "Pilih Indikator yang Dianalisis:", 
         fitur_tersedia, 
@@ -66,7 +66,7 @@ def render_pengaturan_ai(df_untuk_ai, df_master, fitur_tersedia):
         placeholder="Klik dan ketik untuk mencari indikator..."
     )
     
-    # --- MENCEGAH BACKSPACE MENGHAPUS INDIKATOR ---
+    # MENCEGAH BACKSPACE MENGHAPUS INDIKATOR
     components.html(
         """
         <script>
@@ -144,7 +144,7 @@ def render_pengaturan_ai(df_untuk_ai, df_master, fitur_tersedia):
                 del st.session_state['hasil_kmeans']
             st.rerun()
 
-    # --- TOMBOL EKSEKUSI ---
+    # TOMBOL EKSEKUSI
     st.write("")
     col_run, col_reset = st.columns([5, 3])
     

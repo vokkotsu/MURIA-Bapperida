@@ -29,7 +29,7 @@ def render_tab_aktif():
     with st.container(border=True):
         df_dasar = st.session_state.data_dasar
         
-        # --- TATA LETAK ATAS BAWAH ---
+        # TATA LETAK ATAS BAWAH
         st.markdown("**🗺️ Luas Wilayah (km²)**")
         df_luas = df_dasar[['Kecamatan', 'Luas Wilayah (km2)']]
         
