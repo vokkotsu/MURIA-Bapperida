@@ -1,6 +1,6 @@
 # utils/constants.py
 
-# --- KOORDINAT & DAFTAR KECAMATAN ---
+# KOORDINAT & DAFTAR KECAMATAN
 KECAMATAN_KUDUS_MAP = {
     "Kaliwungu": [-6.8058, 110.8143],
     "Kota": [-6.8048, 110.8405],

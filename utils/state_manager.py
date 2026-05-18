@@ -23,7 +23,7 @@ def pastikan_folder_ada():
     if not os.path.exists(DATA_DIR):
         os.makedirs(DATA_DIR)
 
-# --- FUNGSI MANAJEMEN DATA JSON ---
+# FUNGSI MANAJEMEN DATA JSON
 def muat_data():
     file_path = get_data_file()
     if os.path.exists(file_path):
@@ -62,7 +62,7 @@ def muat_profil_dasar():
                 data = json.load(f)
                 df = pd.DataFrame(data['data'])
                 
-                # --- BACKWARD COMPATIBILITY ---
+                # BACKWARD COMPATIBILITY
                 # Jika masih ada data bernama (Jiwa) lama, otomatis ubah namanya menjadi 2026
                 if "Jumlah Penduduk (Jiwa)" in df.columns:
                     df.rename(columns={"Jumlah Penduduk (Jiwa)": "Jumlah Penduduk 2026"}, inplace=True)
@@ -96,7 +96,7 @@ def reset_profil_dasar():
     if os.path.exists(file_path):
         os.remove(file_path)
 
-# --- INISIALISASI SESSION STATE & HISTORY UNDO/REDO ---
+# INISIALISASI SESSION STATE & HISTORY UNDO/REDO
 def init_session_state():
     if "koleksi_tabel" not in st.session_state: 
         st.session_state.koleksi_tabel = muat_data() 
