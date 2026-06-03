@@ -61,7 +61,9 @@ def render_peta_zonasi(fitur_terpilih):
 def render_tabel_zonasi(fitur_terpilih):
     """Merender antarmuka tabel rincian di bagian bawah."""
     
-    # PANEL EVALUASI PENGUJIAN MODEL
+    # ==========================================
+    # FITUR BARU: PANEL EVALUASI PENGUJIAN MODEL
+    # ==========================================
     metrics = st.session_state.get('ai_metrics', {})
     if metrics:
         sil_score = metrics.get('silhouette', 0.0)
@@ -78,12 +80,17 @@ def render_tabel_zonasi(fitur_terpilih):
             sil_status = "🔴 Tumpang Tindih"
             sil_help = "Batas antar klaster kurang jelas. Coba ubah bobot atau jumlah zona."
             
+        # --- PERBAIKAN: MENGUBAH TITIK (US) MENJADI KOMA (INDO) ---
+        sil_tampil = f"{sil_score:.3f}".replace('.', ',')
+        inertia_tampil = f"{inertia_score:.1f}".replace('.', ',')
+            
         with st.container(border=True):
             st.markdown("#### 🧪 Hasil Pengujian K-Means (Model Evaluation)")
             c1, c2, c3 = st.columns(3)
-            c1.metric("Silhouette Score (-1 s.d 1)", f"{sil_score:.3f}", sil_status, help="Mengukur tingkat ketepatan pembagian zona. Semakin mendekati 1 semakin bagus.")
-            c2.metric("Inertia (Kerapatan Klaster)", f"{inertia_score:.1f}", help="Mengukur jarak antar data di dalam klaster yang sama. Semakin kecil nilainya semakin padat.")
+            c1.metric("Silhouette Score (-1 s.d 1)", sil_tampil, sil_status, help="Mengukur tingkat ketepatan pembagian zona. Semakin mendekati 1 semakin bagus.")
+            c2.metric("Inertia (Kerapatan Klaster)", inertia_tampil, help="Mengukur jarak antar data di dalam klaster yang sama. Semakin kecil nilainya semakin padat.")
             c3.metric("Status Data", "Tervalidasi ✔️", help="Model telah berhasil melakukan standarisasi (Standard Scaler) pada indikator.")
+    # ==========================================
     
     st.markdown("#### 📊 Tabel Rincian Anggota Klaster")
     
