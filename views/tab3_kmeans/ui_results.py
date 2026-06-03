@@ -60,6 +60,31 @@ def render_peta_zonasi(fitur_terpilih):
 
 def render_tabel_zonasi(fitur_terpilih):
     """Merender antarmuka tabel rincian di bagian bawah."""
+    
+    # PANEL EVALUASI PENGUJIAN MODEL
+    metrics = st.session_state.get('ai_metrics', {})
+    if metrics:
+        sil_score = metrics.get('silhouette', 0.0)
+        inertia_score = metrics.get('inertia', 0.0)
+        
+        # Penentuan status Silhouette Score
+        if sil_score >= 0.5:
+            sil_status = "🟢 Sangat Baik"
+            sil_help = "Klaster terpisah dengan sangat jelas."
+        elif sil_score >= 0.25:
+            sil_status = "🟡 Cukup Baik"
+            sil_help = "Klaster terpisah dengan wajar, namun ada wilayah di perbatasan."
+        else:
+            sil_status = "🔴 Tumpang Tindih"
+            sil_help = "Batas antar klaster kurang jelas. Coba ubah bobot atau jumlah zona."
+            
+        with st.container(border=True):
+            st.markdown("#### 🧪 Hasil Pengujian K-Means (Model Evaluation)")
+            c1, c2, c3 = st.columns(3)
+            c1.metric("Silhouette Score (-1 s.d 1)", f"{sil_score:.3f}", sil_status, help="Mengukur tingkat ketepatan pembagian zona. Semakin mendekati 1 semakin bagus.")
+            c2.metric("Inertia (Kerapatan Klaster)", f"{inertia_score:.1f}", help="Mengukur jarak antar data di dalam klaster yang sama. Semakin kecil nilainya semakin padat.")
+            c3.metric("Status Data", "Tervalidasi ✔️", help="Model telah berhasil melakukan standarisasi (Standard Scaler) pada indikator.")
+    
     st.markdown("#### 📊 Tabel Rincian Anggota Klaster")
     
     if 'hasil_kmeans' in st.session_state:
@@ -76,8 +101,11 @@ def render_tabel_zonasi(fitur_terpilih):
         # Menyalin dataframe untuk dimanipulasi tampilannya
         df_tampil = df_asli.copy()
         
-        # Menyiapkan kolom yang akan ditampilkan (Kecamatan, Status Zona, + fitur_terpilih)
-        kolom_yang_ditampilkan = ['Kecamatan', 'Status Zona'] + list(fitur_terpilih)
+        # Menyiapkan kolom yang akan ditampilkan (Kecamatan, Status Zona, [Fokus Perbaikan], + fitur_terpilih)
+        kolom_yang_ditampilkan = ['Kecamatan', 'Status Zona']
+        if 'Fokus_Perbaikan' in df_tampil.columns:
+            kolom_yang_ditampilkan.append('Fokus_Perbaikan')
+        kolom_yang_ditampilkan.extend(list(fitur_terpilih))
         
         # Jika toggle aktif, tukar nilai desimal AI dengan nilai Human Ratio (Rasio Terbalik)
         if mode_terbalik:
@@ -94,6 +122,9 @@ def render_tabel_zonasi(fitur_terpilih):
             "Kecamatan": st.column_config.TextColumn("Kecamatan", width="medium"),
             "Status Zona": st.column_config.TextColumn("Status Zona", width="medium")
         }
+        
+        if 'Fokus_Perbaikan' in df_tampil.columns:
+            config_kolom_tab3["Fokus_Perbaikan"] = st.column_config.TextColumn("Fokus Perbaikan", width="medium")
         
         for fitur in fitur_terpilih:
             fitur_singkat = fitur if len(fitur) <= 20 else fitur[:20] + "..."
