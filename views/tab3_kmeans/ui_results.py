@@ -2,11 +2,12 @@
 import streamlit as st
 import pandas as pd
 import io
+import plotly.express as px
+import plotly.graph_objects as go
 from streamlit_folium import st_folium
 from views.tab3_kmeans.map_core import buat_peta
 
 def konversi_df_ke_excel(df):
-    """Fungsi pembantu untuk mengubah DataFrame ke Excel dalam memori."""
     output = io.BytesIO()
     with pd.ExcelWriter(output, engine='openpyxl') as writer:
         df.to_excel(writer, index=False, sheet_name='Hasil Zonasi')
@@ -14,30 +15,24 @@ def konversi_df_ke_excel(df):
     return processed_data
 
 def format_angka_indo(val):
-    """Fungsi pembantu untuk memformat angka: hapus nol berlebih dan gunakan format Indonesia."""
     try:
         if pd.isna(val):
             return "0"
         val = float(val)
         if val.is_integer():
-            # Jika bilangan bulat (misal: 7.000000), tampilkan tanpa desimal dan pakai titik untuk ribuan
             return f"{int(val):,}".replace(',', '.')
         else:
-            # Jika desimal, batasi maksimal 6 angka di belakang koma, lalu hapus nol berlebih di akhirnya
             s = f"{val:,.6f}".rstrip('0').rstrip('.')
-            # Konversi tanda dari format US (1,234.56) ke format Indo (1.234,56)
             return s.replace(',', 'X').replace('.', ',').replace('X', '.')
     except:
         return val
 
 def render_peta_zonasi(fitur_terpilih):
-    """Merender antarmuka peta WebGIS di kolom kanan."""
     if 'hasil_kmeans' in st.session_state:
         df_hasil = st.session_state.hasil_kmeans
         
         st.markdown("#### 🗺️ Peta Prioritas Wilayah")
         
-        # PERBAIKAN ERROR HASHING
         df_hasil_map = df_hasil.copy()
         if 'Koordinat' in df_hasil_map.columns:
             df_hasil_map['Koordinat'] = df_hasil_map['Koordinat'].apply(lambda x: tuple(x) if isinstance(x, list) else x)
@@ -45,8 +40,6 @@ def render_peta_zonasi(fitur_terpilih):
         peta_kudus = buat_peta(df_hasil_map, tuple(fitur_terpilih))
         
         st.write("")
-        
-        # PERBAIKAN FLICKERING: Menambahkan returned_objects=[]
         st_folium(peta_kudus, width=700, height=450, returned_objects=[])
         
         map_html = peta_kudus.get_root().render()
@@ -59,62 +52,110 @@ def render_peta_zonasi(fitur_terpilih):
         )
 
 def render_tabel_zonasi(fitur_terpilih):
-    """Merender antarmuka tabel rincian di bagian bawah."""
-    
-    # ==========================================
-    # FITUR BARU: PANEL EVALUASI PENGUJIAN MODEL
-    # ==========================================
     metrics = st.session_state.get('ai_metrics', {})
     if metrics:
         sil_score = metrics.get('silhouette', 0.0)
         inertia_score = metrics.get('inertia', 0.0)
         
-        # Penentuan status Silhouette Score
         if sil_score >= 0.5:
             sil_status = "🟢 Sangat Baik"
-            sil_help = "Klaster terpisah dengan sangat jelas."
         elif sil_score >= 0.25:
             sil_status = "🟡 Cukup Baik"
-            sil_help = "Klaster terpisah dengan wajar, namun ada wilayah di perbatasan."
         else:
             sil_status = "🔴 Tumpang Tindih"
-            sil_help = "Batas antar klaster kurang jelas. Coba ubah bobot atau jumlah zona."
             
-        # --- PERBAIKAN: MENGUBAH TITIK (US) MENJADI KOMA (INDO) ---
         sil_tampil = f"{sil_score:.3f}".replace('.', ',')
         inertia_tampil = f"{inertia_score:.1f}".replace('.', ',')
             
         with st.container(border=True):
             st.markdown("#### 🧪 Hasil Pengujian K-Means (Model Evaluation)")
             c1, c2, c3 = st.columns(3)
+            
             c1.metric("Silhouette Score (-1 s.d 1)", sil_tampil, sil_status, help="Mengukur tingkat ketepatan pembagian zona. Semakin mendekati 1 semakin bagus.")
             c2.metric("Inertia (Kerapatan Klaster)", inertia_tampil, help="Mengukur jarak antar data di dalam klaster yang sama. Semakin kecil nilainya semakin padat.")
-            c3.metric("Status Data", "Tervalidasi ✔️", help="Model telah berhasil melakukan standarisasi (Standard Scaler) pada indikator.")
-    # ==========================================
-    
+            c3.metric("Status Data", "Tervalidasi ✔️", help="Model telah berhasil melakukan standarisasi (Standard Scaler) pada indikator untuk menyeimbangkan skala data.")
+            
+            if 'sil_samples' in metrics and len(metrics['sil_samples']) > 0:
+                with st.expander("📈 Buka Visualisasi Grafik", expanded=False):
+                    
+                    df_grafik = pd.DataFrame({
+                        'Kecamatan': metrics['kecamatan_list'],
+                        'Zona': metrics['zona_list'],
+                        'Silhouette Score': metrics['sil_samples'],
+                        'PCA Komponen 1': metrics['pca_x'],
+                        'PCA Komponen 2': metrics['pca_y']
+                    })
+                    
+                    warna_zona = {
+                        "Zona 1 (Aman/Rendah)": "#198754", 
+                        "Zona 2 (Waspada)": "#fd7e14",      
+                        "Zona 3 (Kritis)": "#dc3545",       
+                        "Zona 4 (Sangat Kritis)": "#842029" 
+                    }
+                    
+                    st.markdown("**1. Grafik PCA (Analisis Komponen Utama)**")
+                    fig_pca = px.scatter(
+                        df_grafik, x='PCA Komponen 1', y='PCA Komponen 2', 
+                        color='Zona', text='Kecamatan', color_discrete_map=warna_zona,
+                        title="Sebaran Data Wilayah (2 Dimensi)"
+                    )
+                    fig_pca.update_traces(textposition='top center', marker=dict(size=12, line=dict(width=1, color='DarkSlateGrey')))
+                    fig_pca.update_layout(height=450, margin=dict(t=50, b=20, l=20, r=20))
+                    st.plotly_chart(fig_pca, use_container_width=True)
+                    
+                    st.markdown("---")
+                    
+                    st.markdown("**2. Grafik Silhouette (Tingkat Kecocokan Zona)**")
+                    df_sil = df_grafik.sort_values(by=['Zona', 'Silhouette Score'], ascending=[True, True])
+                    fig_sil = px.bar(
+                        df_sil, x='Silhouette Score', y='Kecamatan', 
+                        color='Zona', orientation='h', color_discrete_map=warna_zona,
+                        title=f"Skor Siluet per Kecamatan (Rata-Rata: {sil_tampil})"
+                    )
+                    fig_sil.add_vline(x=0, line_width=2, line_dash="dash", line_color="black")
+                    fig_sil.update_layout(height=500, margin=dict(t=50, b=20, l=20, r=20), yaxis={'categoryorder':'array', 'categoryarray':df_sil['Kecamatan']})
+                    st.plotly_chart(fig_sil, use_container_width=True)
+                    
+                    st.markdown("---")
+                    
+                    st.markdown("**3. Grafik Evaluasi Inertia (Elbow Method)**")
+                    if 'elbow_k' in metrics and 'elbow_inertia' in metrics:
+                        df_elbow = pd.DataFrame({
+                            'Jumlah Klaster (K)': metrics['elbow_k'],
+                            'Nilai Inertia': metrics['elbow_inertia']
+                        })
+                        
+                        fig_elbow = px.line(
+                            df_elbow, x='Jumlah Klaster (K)', y='Nilai Inertia', 
+                            markers=True, title="Metode Elbow (Pencarian Jumlah Zona Optimal)"
+                        )
+                        fig_elbow.update_traces(marker=dict(size=10, color="#0d6efd"), line=dict(color="#0d6efd", width=3))
+                        
+                        current_k = metrics.get('current_k', 3)
+                        fig_elbow.add_vline(
+                            x=current_k, line_width=2, line_dash="dash", line_color="red",
+                            annotation_text=f"Pilihan Saat Ini (K={current_k})", 
+                            annotation_position="top right"
+                        )
+                        
+                        fig_elbow.update_layout(height=450, margin=dict(t=50, b=20, l=20, r=20))
+                        st.plotly_chart(fig_elbow, use_container_width=True)
+
     st.markdown("#### 📊 Tabel Rincian Anggota Klaster")
     
     if 'hasil_kmeans' in st.session_state:
         df_asli = st.session_state.hasil_kmeans
         
-        # TOGGLE RASIO TERBALIK
         col_tg, _ = st.columns([2, 1])
         with col_tg:
-            mode_terbalik = st.toggle(
-                "🗣️ Gunakan Mode Rasio Terbalik", 
-                help="1. Apabila turn off (1 jiwa/km² berbanding X indikator)\n2. Apabila turn on (1 indikator berbanding X jiwa/km²)"
-            )
+            mode_terbalik = st.toggle("🗣️ Gunakan Mode Rasio Terbalik")
 
-        # Menyalin dataframe untuk dimanipulasi tampilannya
         df_tampil = df_asli.copy()
         
-        # Menyiapkan kolom yang akan ditampilkan (Kecamatan, Status Zona, [Fokus Perbaikan], + fitur_terpilih)
+        # Menghapus Fokus_Perbaikan dari list kolom yang ditampilkan
         kolom_yang_ditampilkan = ['Kecamatan', 'Status Zona']
-        if 'Fokus_Perbaikan' in df_tampil.columns:
-            kolom_yang_ditampilkan.append('Fokus_Perbaikan')
         kolom_yang_ditampilkan.extend(list(fitur_terpilih))
         
-        # Jika toggle aktif, tukar nilai desimal AI dengan nilai Human Ratio (Rasio Terbalik)
         if mode_terbalik:
             for col in fitur_terpilih:
                 if "[Dibagi" in col:
@@ -122,7 +163,6 @@ def render_tabel_zonasi(fitur_terpilih):
                     if nama_human in df_tampil.columns:
                         df_tampil[col] = df_tampil[nama_human]
                         
-        # Filter hanya kolom yang ingin ditampilkan dan urutkan
         df_tampil = df_tampil[kolom_yang_ditampilkan].sort_values(by="Status Zona")
         
         config_kolom_tab3 = {
@@ -130,22 +170,15 @@ def render_tabel_zonasi(fitur_terpilih):
             "Status Zona": st.column_config.TextColumn("Status Zona", width="medium")
         }
         
-        if 'Fokus_Perbaikan' in df_tampil.columns:
-            config_kolom_tab3["Fokus_Perbaikan"] = st.column_config.TextColumn("Fokus Perbaikan", width="medium")
-        
         for fitur in fitur_terpilih:
             fitur_singkat = fitur if len(fitur) <= 20 else fitur[:20] + "..."
-            
-            # Tambahkan embel-embel " (Terbalik)" pada header jika mode terbalik aktif agar user sadar
             label_tambahan = " (Terbalik)" if mode_terbalik and "[Dibagi" in fitur else ""
-            
             config_kolom_tab3[fitur] = st.column_config.Column(
                 label=fitur_singkat + label_tambahan,
                 help=f"Indikator Asli: {fitur}",
-                width=240 # PERBAIKAN: Menggunakan ukuran fix 240 pixel agar sangat proporsional
+                width=240
             )
         
-        # PERBAIKAN FORMAT ANGKA: Menerapkan fungsi format_angka_indo
         formatter_dict = {fitur: format_angka_indo for fitur in fitur_terpilih}
         
         st.dataframe(
